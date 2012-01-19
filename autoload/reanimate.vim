@@ -135,10 +135,6 @@ endfunction
 let s:events = s:events()
 
 
-function! s:reanimate_hook(event, ...)
-	call call(s:events.add, [a:event] + a:000, s:events)
-endfunction
-
 
 function! s:context(point)
 	let self = {}
@@ -162,7 +158,7 @@ function! s:mkdir()
 	return self
 endfunction
 
-call s:reanimate_hook(s:mkdir())
+call reanimate#hook(s:mkdir())
 
 
 function! s:session()
@@ -187,7 +183,7 @@ function! s:session()
 	return self
 endfunction
 
-call s:reanimate_hook(s:session())
+call reanimate#hook(s:session())
 
 
 function! s:viminfo()
@@ -209,7 +205,7 @@ function! s:viminfo()
 	return self
 endfunction
 
-call s:reanimate_hook(s:viminfo())
+call reanimate#hook(s:viminfo())
 
 
 function! s:window()
@@ -238,7 +234,7 @@ function! s:window()
 	return self
 endfunction
 
-call s:reanimate_hook(s:window())
+call reanimate#hook(s:window())
 
 
 
