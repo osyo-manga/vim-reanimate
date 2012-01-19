@@ -62,7 +62,6 @@ endfunction
 
 
 
-
 let s:last_point = ""
 
 function! s:save_dir()
@@ -115,14 +114,19 @@ function! s:events()
 	endfunction
 
 	function! self.call(event, context)
-		let context = extend(a:context, {"event" : a:event})
-		for var in filter(copy(self.list), "has_key(v:val, a:event) && !s:is_disable(v:val)")
-			if type(var[a:event]) == type({}) && has_key(var[a:event], "apply")
-				call var[a:event].apply(context)
-			else
-				call var[a:event](context)
-			endif
-		endfor
+		let context = extend(copy(a:context), {"event" : a:event})
+		let list = filter(copy(self.list), "has_key(v:val, a:event) && !s:is_disable(v:val)")
+		if !empty(list)
+			call self.call(a:event."_pre", context)
+			for var in list
+				if type(var[a:event]) == type({}) && has_key(var[a:event], "apply")
+					call var[a:event].apply(context)
+				else
+					call var[a:event](context)
+				endif
+			endfor
+			call self.call(a:event."_post", context)
+		endif
 	endfunction
 	
 	return self
@@ -240,17 +244,13 @@ call s:reanimate_hook(s:window())
 
 " Save
 function! s:save(context)
-	call s:events.call("save_pre",  a:context)
 	call s:events.call("save",      a:context)
-	call s:events.call("save_post", a:context)
 endfunction
 
 
 " Load
 function! s:load(context)
-	call s:events.call("load_pre",  a:context)
 	call s:events.call("load",      a:context)
-	call s:events.call("load_post", a:context)
 endfunction
 
 
