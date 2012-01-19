@@ -1,14 +1,11 @@
-
 let s:save_cpo = &cpo
 set cpo&vim
 scriptencoding utf-8
 
 
-
 function! reanimate#hook(event, ...)
 	call call(s:events.add, [a:event] + a:000, s:events)
 endfunction
-
 
 function! reanimate#point_to_path(point)
 	return s:save_dir()."/".(a:point)
@@ -88,6 +85,15 @@ function! s:last_point()
 	return empty(s:last_point) ? s:default_point() : s:last_point
 endfunction
 
+function! s:disables()
+	return get(g:, "reanimate_disables", [])
+endfunction
+
+function! s:is_disable(event)
+	return type(a:event) == type({}) && has_key(a:event, "name") ? count(s:disables(), a:event.name)
+\		 : 0
+endfunction
+
 
 " event
 function! s:eventable(name, func)
@@ -110,7 +116,7 @@ function! s:events()
 
 	function! self.call(event, context)
 		let context = extend(a:context, {"event" : a:event})
-		for var in filter(copy(self.list), "has_key(v:val, a:event)")
+		for var in filter(copy(self.list), "has_key(v:val, a:event) && !s:is_disable(v:val)")
 			if type(var[a:event]) == type({}) && has_key(var[a:event], "apply")
 				call var[a:event].apply(a:context)
 			else
@@ -156,7 +162,7 @@ call s:reanimate_hook(s:mkdir())
 
 
 function! s:session()
-	let self = s:make_event("session")
+	let self = s:make_event("reanimate_session")
 
 	function! self.load(context)
 		let dir = a:context.path
@@ -181,7 +187,7 @@ call s:reanimate_hook(s:session())
 
 
 function! s:viminfo()
-	let self = s:make_event("viminfo")
+	let self = s:make_event("reanimate_viminfo")
 
 	function! self.load(context)
 		let dir = a:context.path
@@ -203,7 +209,7 @@ call s:reanimate_hook(s:viminfo())
 
 
 function! s:window()
-	let self = s:make_event("window")
+	let self = s:make_event("reanimate_window")
 
 	function! self.load(context)
 		let dir = a:context.path
