@@ -237,16 +237,40 @@ endfunction
 call reanimate#hook(s:window())
 
 
+function! s:error_message()
+	let self = s:make_event("reanimate_error_message")
+
+	function! self.save_failed(context)
+		echoerr "== reanimate.vim == ".a:context.point." Save Failed!! : ".a:context.exception
+	endfunction
+	function! self.load_failed(context)
+		echoerr "== reanimate.vim == ".a:context.point." Load Failed!! : ".a:context.exception
+	endfunction
+
+	return self
+endfunction
+
+call reanimate#hook(s:error_message())
 
 " Save
 function! s:save(context)
-	call s:events.call("save",      a:context)
+	try
+		call s:events.call("save", a:context)
+	catch
+		let a:context.exception = v:exception
+		call s:events.call("save_failed", a:context)
+	endtry
 endfunction
 
 
 " Load
 function! s:load(context)
-	call s:events.call("load",      a:context)
+	try
+		call s:events.call("load", a:context)
+	catch
+		let a:context.exception = v:exception
+		call s:events.call("load_failed", a:context)
+	endtry
 endfunction
 
 
