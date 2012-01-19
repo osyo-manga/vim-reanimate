@@ -118,9 +118,9 @@ function! s:events()
 		let context = extend(a:context, {"event" : a:event})
 		for var in filter(copy(self.list), "has_key(v:val, a:event) && !s:is_disable(v:val)")
 			if type(var[a:event]) == type({}) && has_key(var[a:event], "apply")
-				call var[a:event].apply(a:context)
+				call var[a:event].apply(context)
 			else
-				call var[a:event](a:context)
+				call var[a:event](context)
 			endif
 		endfor
 	endfunction
