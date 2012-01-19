@@ -8,7 +8,7 @@ function! unite#sources#reanimate#define()
 endfunction
 
 function! s:latest_time(dir)
-	let time = getftime(split(globpath(a:dir, "/*"), "\n")[0])
+	let time = getftime(get(split(globpath(a:dir, "/*"), "\n"), 0, ""))
 	return time != -1 && exists("*strftime") ? strftime("(%c)", time) : ""
 endfunction
 
