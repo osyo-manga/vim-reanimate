@@ -7,6 +7,7 @@ function! unite#sources#reanimate#define()
 	return s:source
 endfunction
 
+
 function! s:latest_time_str(dir)
 	let time = getftime(get(split(globpath(a:dir, "/*"), "\n"), 0, ""))
 	return time != -1 && exists("*strftime") ? strftime("(%c)", time) : ""
@@ -21,9 +22,18 @@ endfunction
 let s:source = {
 \	"name" : "reanimate",
 \	"description" : "reanimate",
+\	"syntax" : "uniteSource_reanimate",
+\	"hooks" : {},
 \	"is_selectable" : 0,
 \	"action_table" : {}
 \}
+
+
+function! s:source.hooks.on_syntax(args, context)
+	syntax match point /\[\zs.*\ze]/ containedin=uniteSource_reanimate
+	highlight point term=bold gui=bold
+endfunction
+
 
 function! s:source.gather_candidates(args, context)
 	let new_save = a:context.default_action == "reanimate_save" ? [{
