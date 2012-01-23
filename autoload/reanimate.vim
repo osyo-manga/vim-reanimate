@@ -44,8 +44,11 @@ function! reanimate#load(...)
 	" すでに保存されており
 	" 今の名前と違う場合に保存を行う
 	if s:is_saved() && new_point != s:last_point
-		if input("Do you want to save the ".s:last_point."? [y/n]:") == "y"
+		let input = input("Do you want to save the ".s:last_point."? [y/n]:")
+		if input == "y"
 			call reanimate#save(s:last_point)
+		elseif input != "n"
+			return
 		endif
 	endif
 	call s:load(s:context(new_point))
