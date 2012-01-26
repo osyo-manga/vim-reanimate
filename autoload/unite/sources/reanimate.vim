@@ -15,7 +15,8 @@ endfunction
 
 function! s:latest_time(dir)
 	let result = s:latest_time_str(a:dir)
-	let space  = join(map(range(23 - len(result)), "' '"), "")
+" 	let space  = join(map(range(23 - len(result)), "' '"), "")
+	let space = repeat(" ", 23 - len(result))
 	return result.space
 endfunction
 
