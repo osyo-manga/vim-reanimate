@@ -173,16 +173,15 @@ function! s:session()
 
 	function! self.load(context)
 		let dir = a:context.path
-		let tmp = &sessionoptions
-		execute "set sessionoptions=".s:sessionoptions()
 		if filereadable(dir."/session.vim")
 			execute "source ".dir."/session.vim"
 		endif
-		execute "set sessionoptions=".tmp
 	endfunction
 
 	function! self.save(context)
 		let dir = a:context.path
+		let tmp = &sessionoptions
+		execute "set sessionoptions=".s:sessionoptions()
 		if !filereadable(dir.'/session.vim') || filewritable(dir.'/session.vim')
 			execute "mksession! ".dir."/session.vim"
 		endif
