@@ -16,7 +16,7 @@ function! reanimate#path_to_point(path)
 endfunction
 
 function! reanimate#save_points_path()
-	return split(globpath(s:save_dir(), "/*"), "\n")
+	return split(globpath(s:save_dir(), "*"), "\n")
 endfunction
 
 function! reanimate#save_points()
@@ -255,10 +255,25 @@ function! s:history()
 	endfunction
 
 	function! self.save_pre_pre(context)
-		let a:context.path = a:context.point_path."/latest"
+		let a:context.path = a:context.point_path."/tmp"
 	endfunction
 
 	function! self.save_pre(context)
+		" dummy
+	endfunction
+
+	function! self.save_post_post(context)
+		let latest_path = a:context.point_path."/latest"
+		if !isdirectory(latest_path)
+			call mkdir(latest_path)
+		endif
+		for file in split(globpath(a:context.path, "*"), "\n")
+			let filename = fnamemodify(file, ":t")
+			echom rename(file, latest_path."/".filename)
+		endfor
+	endfunction
+
+	function! self.save_post(context)
 		" dummy
 	endfunction
 
@@ -282,6 +297,20 @@ function! s:error_message()
 endfunction
 
 call reanimate#hook(s:error_message())
+
+function! s:message()
+	let self = s:make_event("reanimate_message")
+	
+	function! self.load_leave()
+		
+	endfunction
+	
+	function! self.save_leave()
+		
+	endfunction
+
+	return self
+endfunction
 
 " Save
 function! s:save(context)
