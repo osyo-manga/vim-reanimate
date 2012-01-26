@@ -64,7 +64,6 @@ function! reanimate#last_point()
 endfunction
 
 
-
 let s:last_point = ""
 
 function! s:save_dir()
@@ -117,10 +116,13 @@ function! s:events()
 	endfunction
 
 	function! self.call(event, context)
-		let context = extend(copy(a:context), {"event" : a:event})
+" 		let context = extend(copy(a:context), {"event" : a:event})
+		let context = a:context
+		let context.event = a:event
 		let list = filter(copy(self.list), "has_key(v:val, a:event) && !s:is_disable(v:val)")
 		if !empty(list)
 			call self.call(a:event."_pre", context)
+" 			let context = {}
 			for var in list
 				if type(var[a:event]) == type({}) && has_key(var[a:event], "apply")
 					call var[a:event].apply(context)
@@ -141,8 +143,10 @@ let s:events = s:events()
 
 function! s:context(point)
 	let self = {}
-	let self.point = a:point
-	let self.path  = reanimate#point_to_path(a:point)
+	let self.point        = a:point
+" 	let self.path         = reanimate#point_to_path(a:point)."/tmp"
+" 	let self.path         = reanimate#point_to_path(a:point)."/tmp"
+	let self.point_path  = reanimate#point_to_path(a:point)
 	return self
 endfunction
 
@@ -155,7 +159,7 @@ function! s:mkdir()
 	let self = s:make_event("mkdir")
 	function! self.save_pre(context)
 		if !isdirectory(a:context.path)
-			call mkdir(a:context.path)
+			call mkdir(a:context.path, "p")
 		endif
 	endfunction
 	return self
@@ -240,6 +244,31 @@ endfunction
 call reanimate#hook(s:window())
 
 
+function! s:history()
+	let self = s:make_event("reanimate_error_message")
+
+	function! self.load_pre_pre(context)
+		let a:context.path = a:context.point_path."/latest"
+	endfunction
+
+	function! self.load_pre(context)
+		" dummy
+	endfunction
+
+	function! self.save_pre_pre(context)
+		let a:context.path = a:context.point_path."/latest"
+	endfunction
+
+	function! self.save_pre(context)
+		" dummy
+	endfunction
+
+	return self
+endfunction
+
+call reanimate#hook(s:history())
+
+
 function! s:error_message()
 	let self = s:make_event("reanimate_error_message")
 
@@ -275,8 +304,6 @@ function! s:load(context)
 		call s:events.call("load_failed", a:context)
 	endtry
 endfunction
-
-
 
 
 
