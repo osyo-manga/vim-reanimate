@@ -9,13 +9,12 @@ endfunction
 
 
 function! s:latest_time_str(dir)
-	let time = getftime(get(split(globpath(a:dir, "/*"), "\n"), 0, ""))
+	let time = getftime(a:dir)
 	return time != -1 && exists("*strftime") ? strftime("(%c)", time) : ""
 endfunction
 
 function! s:latest_time(dir)
 	let result = s:latest_time_str(a:dir)
-" 	let space  = join(map(range(23 - len(result)), "' '"), "")
 	let space = repeat(" ", 23 - len(result))
 	return result.space
 endfunction
