@@ -26,33 +26,37 @@ endfunction
 
 function! reanimate#save(...)
 	let new_point = a:0 && !empty(a:1) ? a:1 : s:last_point()
+	let context = s:context(new_point)
 
-	" 新しい名前が既に存在時し、
-	" 新しい名前と現在の保存名が違っている場合に確認する
-	if count(reanimate#save_points(), new_point) && new_point != s:last_point()
-		if input("Overwrite the ".new_point."? [y/n]:") != "y"
-			return
-		endif
+	" 違うポイントに保存する場合
+	let is_another_point = count(reanimate#save_points(), new_point) && new_point != s:last_point()
+	if is_another_point
+		call s:call_event("save_leave", context)
 	endif
-	call s:save(s:context(new_point))
+	call s:save(context)
 	let s:last_point = new_point
+
+	if is_another_point
+		call s:call_event("save_enter",context)
+	endif
 endfunction
 
 function! reanimate#load(...)
 	let new_point = a:0 && !empty(a:1) ? a:1 : s:last_point()
+	let context = s:context(new_point)
 	
-	" すでに保存されており
-	" 今の名前と違う場合に保存を行う
-	if s:is_saved() && new_point != s:last_point
-		let input = input("Do you want to save the ".s:last_point."? [y/n]:")
-		if input == "y"
-			call reanimate#save(s:last_point)
-		elseif input != "n"
-			return
-		endif
+	" 違うポイントをロードする場合
+	let is_another_point = s:is_saved() && new_point != s:last_point
+	if is_another_point
+		call s:call_event("load_leave", context)
 	endif
-	call s:load(s:context(new_point))
+
+	call s:load(context)
 	let s:last_point = new_point
+
+	if is_another_point
+		call s:call_event("load_enter",context)
+	endif
 endfunction
 
 function! reanimate#is_saved()
@@ -95,6 +99,10 @@ function! s:is_disable(event)
 \		 : 0
 endfunction
 
+function! s:call_event(event, context)
+	call s:events.call(a:event, a:context)
+endfunction
+
 
 " event
 function! s:eventable(name, func)
@@ -116,13 +124,11 @@ function! s:events()
 	endfunction
 
 	function! self.call(event, context)
-" 		let context = extend(copy(a:context), {"event" : a:event})
 		let context = a:context
 		let context.event = a:event
 		let list = filter(copy(self.list), "has_key(v:val, a:event) && !s:is_disable(v:val)")
 		if !empty(list)
 			call self.call(a:event."_pre", context)
-" 			let context = {}
 			for var in list
 				if type(var[a:event]) == type({}) && has_key(var[a:event], "apply")
 					call var[a:event].apply(context)
@@ -144,7 +150,6 @@ let s:events = s:events()
 function! s:context(point)
 	let self = {}
 	let self.point        = a:point
-" 	let self.path         = reanimate#point_to_path(a:point)."/tmp"
 " 	let self.path         = reanimate#point_to_path(a:point)."/tmp"
 	let self.point_path  = reanimate#point_to_path(a:point)
 	return self
@@ -269,7 +274,6 @@ function! s:history()
 		endif
 		for file in split(globpath(a:context.path, "*"), "\n")
 			let filename = fnamemodify(file, ":t")
-			echom rename(file, latest_path."/".filename)
 		endfor
 	endfunction
 
@@ -298,19 +302,33 @@ endfunction
 
 call reanimate#hook(s:error_message())
 
+
 function! s:message()
 	let self = s:make_event("reanimate_message")
 	
-	function! self.load_leave()
-		
+	function! self.load_leave(context)
+		let input = input("Do you want to save the ".s:last_point."? [y/n]:")
+		if input == "y"
+			call reanimate#save(s:last_point)
+		elseif input != "n"
+" 			echom "Canceled"
+			throw "Canceled"
+		endif
 	endfunction
 	
-	function! self.save_leave()
-		
+	function! self.save_leave(context)
+		let input = input("Overwrite the ".a:context.point."? [y/n]:")
+		if input != "y"
+" 			echom "No Saved"
+			throw "Canceled"
+		endif
 	endfunction
 
 	return self
 endfunction
+
+call reanimate#hook(s:message())
+
 
 " Save
 function! s:save(context)
