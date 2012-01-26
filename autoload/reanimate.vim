@@ -16,7 +16,7 @@ function! reanimate#path_to_point(path)
 endfunction
 
 function! reanimate#save_points_path()
-	return split(globpath(s:save_dir(), "*"), "\n")
+	return filter(split(globpath(s:save_dir(), "*"), "\n"), "!s:empty_directory(v:val.'/latest')")
 endfunction
 
 function! reanimate#save_points()
@@ -92,6 +92,10 @@ endfunction
 
 function! s:disables()
 	return get(g:, "reanimate_disables", [])
+endfunction
+
+function! s:empty_directory(expr)
+	return isdirectory(a:expr) ? empty(globpath(a:expr, "*")) : 1
 endfunction
 
 function! s:is_disable(event)
