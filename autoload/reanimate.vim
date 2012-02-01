@@ -80,15 +80,11 @@ endfunction
 let s:last_point = ""
 
 function! s:save_dir()
-	return substitute(get(g:, "reanimate_save_dir", "~/reanimate/save_dir"), "\\", "/", "g")
+	return substitute(g:reanimate_save_dir, "\\", "/", "g")
 endfunction
 
 function! s:default_point()
-	return get(g:, "reanimate_default_save_name", "latest")
-endfunction
-
-function! s:sessionoptions()
-	return get(g:, "reanimate_sessionoptions", &sessionoptions)
+	return g:reanimate_default_save_name
 endfunction
 
 function! s:is_saved()
@@ -99,8 +95,12 @@ function! s:last_point()
 	return empty(s:last_point) ? s:default_point() : s:last_point
 endfunction
 
+function! s:sessionoptions()
+	return g:reanimate_sessionoptions
+endfunction
+
 function! s:disables()
-	return get(g:, "reanimate_disables", [])
+	return g:reanimate_disables
 endfunction
 
 function! s:empty_directory(expr)
