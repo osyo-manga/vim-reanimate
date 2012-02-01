@@ -41,6 +41,5 @@ command!
 \	call reanimate#load(input("Input SavePoint Name:"))
 
 
-
 let &cpo = s:save_cpo
 unlet s:save_cpo

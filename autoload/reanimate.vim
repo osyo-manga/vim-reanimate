@@ -3,6 +3,7 @@ set cpo&vim
 scriptencoding utf-8
 
 
+
 " reanimate#hook(event)
 " or
 " reanimate#hook(Funcref, name, event_name)
@@ -77,6 +78,11 @@ function! reanimate#last_point()
 endfunction
 
 
+function! s:setup()
+	call s:load_event_define()
+endfunction
+
+
 let s:last_point = ""
 
 function! s:save_dir()
@@ -93,10 +99,6 @@ endfunction
 
 function! s:last_point()
 	return empty(s:last_point) ? s:default_point() : s:last_point
-endfunction
-
-function! s:sessionoptions()
-	return g:reanimate_sessionoptions
 endfunction
 
 function! s:disables()
@@ -117,13 +119,22 @@ function! s:call_event(event, context)
 endfunction
 
 
-" event
-function! s:eventable(name, func)
-	let self = s:make_event("")
-	let self[a:name] = a:func
-	return self
+function! s:load_event_define()
+	let event_files = split(globpath(&rtp, "autoload/reanimate/events/*.vim"), "\n")
+	for name in map(event_files, "fnamemodify(v:val, ':t:r')")
+		call reanimate#hook(reanimate#events#{name}#define())
+	endfor
 endfunction
 
+
+
+function! s:context(point)
+	let self = {}
+	let self.point        = a:point
+" 	let self.path         = reanimate#point_to_path(a:point)."/tmp"
+	let self.point_path  = reanimate#point_to_path(a:point)
+	return self
+endfunction
 
 
 function! s:make_events()
@@ -164,202 +175,6 @@ endfunction
 let s:events = s:make_events()
 
 
-
-function! s:context(point)
-	let self = {}
-	let self.point        = a:point
-" 	let self.path         = reanimate#point_to_path(a:point)."/tmp"
-	let self.point_path  = reanimate#point_to_path(a:point)
-	return self
-endfunction
-
-
-function! s:make_event(name)
-	return {"name" : a:name}
-endfunction
-
-function! s:mkdir()
-	let self = s:make_event("mkdir")
-	function! self.save_pre(context)
-		if !isdirectory(a:context.path)
-			call mkdir(a:context.path, "p")
-		endif
-	endfunction
-	return self
-endfunction
-
-call reanimate#hook(s:mkdir())
-
-
-function! s:session()
-	let self = s:make_event("reanimate_session")
-
-	function! self.load(context)
-		let dir = a:context.path
-		if filereadable(dir."/session.vim")
-			execute "source ".dir."/session.vim"
-		endif
-	endfunction
-
-	function! self.save(context)
-		let dir = a:context.path
-		let tmp = &sessionoptions
-		execute "set sessionoptions=".s:sessionoptions()
-		if !filereadable(dir.'/session.vim') || filewritable(dir.'/session.vim')
-			execute "mksession! ".dir."/session.vim"
-		endif
-	endfunction
-	return self
-endfunction
-
-call reanimate#hook(s:session())
-
-
-function! s:viminfo()
-	let self = s:make_event("reanimate_viminfo")
-
-	function! self.load(context)
-		let dir = a:context.path
-		if filereadable(dir."/viminfo.vim")
-			execute "rviminfo ".dir."/viminfo.vim"
-		endif
-	endfunction
-
-	function! self.save(context)
-		let dir = a:context.path
-		if !filereadable(dir.'/viminfo.vim') || filewritable(dir.'/viminfo.vim')
-			execute "wviminfo!  ".dir."/viminfo.vim"
-		endif
-	endfunction
-	return self
-endfunction
-
-call reanimate#hook(s:viminfo())
-
-
-function! s:window()
-	let self = s:make_event("reanimate_window")
-
-	function! self.load(context)
-		let dir = a:context.path
-		if filereadable(dir."/vimwinpos.vim") && has("gui")
-			execute "source ".dir."/vimwinpos.vim"
-		endif
-	endfunction
-
-	function! self.save(context)
-		let dir = a:context.path
-		if !filereadable(dir.'/vimwinpos.vim') || filewritable(dir.'/vimwinpos.vim')
-			if has("gui")
-				let options = [
-				\ 'set columns=' . &columns,
-				\ 'set lines=' . &lines,
-				\ 'winpos ' . getwinposx() . ' ' . getwinposy(),
-				\ ]
-				call writefile(options, dir.'/vimwinpos.vim')
-			endif
-		endif
-	endfunction
-	return self
-endfunction
-
-call reanimate#hook(s:window())
-
-
-function! s:history()
-	let self = s:make_event("reanimate_history")
-
-	function! self.load_pre_pre(context)
-		let a:context.path = a:context.point_path."/latest"
-	endfunction
-
-	function! self.load_pre(context)
-		" dummy
-	endfunction
-
-	function! self.save_pre_pre(context)
-		let a:context.path = a:context.point_path."/tmp"
-	endfunction
-
-	function! self.save_pre(context)
-		" dummy
-	endfunction
-
-	function! self.save_post_pre(context)
-" 		let history_max = 5
-		let latest_path = a:context.point_path."/latest"
-		let tmp_path    = a:context.point_path."/tmp"
-" 		let histories = split(globpath(a:context.point_path, "*"), "\n")
-" 		PP histories
-" 		let latest_history_path = histories[0]
-" 		echom len(histories)
-" 		if isdirectory(latest_path)
-" 			let history_path = a:context.point_path."/".getftime(latest_path)
-" 			call rename(latest_path, history_path)
-" 		endif
-" 		call rename(tmp_path, latest_path)
-		if !isdirectory(latest_path)
-			call mkdir(latest_path)
-		endif
-		for file in split(globpath(a:context.path, "*"), "\n")
-			let filename = fnamemodify(file, ":t")
-			call rename(file, latest_path."/".filename)
-		endfor
-	endfunction
-
-	function! self.save_post(context)
-		" dummy
-	endfunction
-
-	return self
-endfunction
-
-call reanimate#hook(s:history())
-
-
-function! s:error_message()
-	let self = s:make_event("reanimate_error_message")
-
-	function! self.save_failed(context)
-		echoerr "== reanimate.vim == ".a:context.point." Save Failed!! : ".a:context.exception
-	endfunction
-	function! self.load_failed(context)
-		echoerr "== reanimate.vim == ".a:context.point." Load Failed!! : ".a:context.exception
-	endfunction
-
-	return self
-endfunction
-
-call reanimate#hook(s:error_message())
-
-
-function! s:message()
-	let self = s:make_event("reanimate_message")
-	
-	function! self.load_leave(context)
-		let input = input("Do you want to save the ".s:last_point."? [y/n]:")
-		if input == "y"
-			call reanimate#save(s:last_point)
-		elseif input != "n"
-" 			echom "Canceled"
-			throw "Canceled"
-		endif
-	endfunction
-	
-	function! self.save_leave(context)
-		let input = input("Overwrite the ".a:context.point."? [y/n]:")
-		if input != "y"
-" 			echom "No Saved"
-			throw "Canceled"
-		endif
-	endfunction
-
-	return self
-endfunction
-
-call reanimate#hook(s:message())
-
-
 " Save
 function! s:save(context)
 	try
@@ -380,6 +195,9 @@ function! s:load(context)
 		call s:events.call("load_failed", a:context)
 	endtry
 endfunction
+
+
+call s:setup()
 
 
 
