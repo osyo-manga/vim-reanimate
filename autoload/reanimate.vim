@@ -3,8 +3,16 @@ set cpo&vim
 scriptencoding utf-8
 
 
+" reanimate#hook(event)
+" or
+" reanimate#hook(Funcref, name, event_name)
 function! reanimate#hook(event, ...)
-	call call(s:events.add, [a:event] + a:000, s:events)
+	let event = a:0 == 0 ? a:event
+\			  : a:0 == 2 ? { "name" : a:1, a:event : a:2 }
+\			  :            { "name" : "",  a:event : a:1 }
+
+	call s:events.add(event)
+" 	call call(s:events.add, [a:event] + a:000, s:events)
 endfunction
 
 function! reanimate#point_to_path(point)
@@ -22,6 +30,7 @@ endfunction
 function! reanimate#save_points()
 	return map(reanimate#save_points_path(), "reanimate#path_to_point(v:val)")
 endfunction
+
 
 
 function! reanimate#save(...)
@@ -110,17 +119,22 @@ endfunction
 
 " event
 function! s:eventable(name, func)
-	let self = {}
+	let self = s:make_event("")
 	let self[a:name] = a:func
 	return self
 endfunction
 
-function! s:events()
+
+
+function! s:make_events()
 	let self = {}
 	let self.list = []
 
 	function! self.add(event, ...)
-		return a:0 == 0 ? add(self.list, a:event) : add(self.list, s:eventable(a:event, a:1))
+		" 既に存在する名前か、"" 以外なら登録しない
+		if !count(map(copy(self.list), "v:val.name"), a:event.name) || empty(a:event.name)
+			call add(self.list, a:event)
+		endif
 	endfunction
 
 	function! self.clear()
@@ -147,7 +161,7 @@ function! s:events()
 	return self
 endfunction
 
-let s:events = s:events()
+let s:events = s:make_events()
 
 
 
@@ -253,7 +267,7 @@ call reanimate#hook(s:window())
 
 
 function! s:history()
-	let self = s:make_event("reanimate_error_message")
+	let self = s:make_event("reanimate_history")
 
 	function! self.load_pre_pre(context)
 		let a:context.path = a:context.point_path."/latest"
@@ -271,13 +285,25 @@ function! s:history()
 		" dummy
 	endfunction
 
-	function! self.save_post_post(context)
+	function! self.save_post_pre(context)
+" 		let history_max = 5
 		let latest_path = a:context.point_path."/latest"
+		let tmp_path    = a:context.point_path."/tmp"
+" 		let histories = split(globpath(a:context.point_path, "*"), "\n")
+" 		PP histories
+" 		let latest_history_path = histories[0]
+" 		echom len(histories)
+" 		if isdirectory(latest_path)
+" 			let history_path = a:context.point_path."/".getftime(latest_path)
+" 			call rename(latest_path, history_path)
+" 		endif
+" 		call rename(tmp_path, latest_path)
 		if !isdirectory(latest_path)
 			call mkdir(latest_path)
 		endif
 		for file in split(globpath(a:context.path, "*"), "\n")
 			let filename = fnamemodify(file, ":t")
+			call rename(file, latest_path."/".filename)
 		endfor
 	endfunction
 
