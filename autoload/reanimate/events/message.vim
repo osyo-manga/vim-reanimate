@@ -21,9 +21,9 @@ function! s:event.load_failed(context)
 endfunction
 
 function! s:event.load_leave(context)
-	let input = input("Do you want to save the ".s:last_point."? [y/n]:")
+	let input = input("Do you want to save the ".reanimate#last_point()."? [y/n]:")
 	if input == "y"
-		call reanimate#save(s:last_point)
+		call reanimate#save(reanimate#last_point())
 	elseif input != "n"
 " 			echom "Canceled"
 		throw "Canceled"
