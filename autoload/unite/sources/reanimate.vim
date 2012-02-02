@@ -30,8 +30,13 @@ let s:source = {
 
 
 function! s:source.hooks.on_syntax(args, context)
-	syntax match point /\[\zs.*\ze]/ containedin=uniteSource_reanimate
-	highlight point term=bold gui=bold
+	syntax match uniteSource__Reanimate_Point
+		\ /\[\zs.*\ze]/ containedin=uniteSource_reanimate
+	highlight uniteSource__Reanimate_Point term=bold gui=bold
+
+	syntax match uniteSource__Reanimate_Time
+		\ /\s\+\zs([^)]*)/ contained containedin=uniteSource_reanimate
+	highlight default link uniteSource__Reanimate_Time Statement
 endfunction
 
 
