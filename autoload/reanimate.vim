@@ -79,11 +79,11 @@ endfunction
 
 
 function! s:setup()
+	let s:last_point = ""
+	let s:events = s:make_events()
 	call s:load_event_define()
 endfunction
 
-
-let s:last_point = ""
 
 function! s:save_dir()
 	return substitute(g:reanimate_save_dir, "\\", "/", "g")
@@ -172,7 +172,6 @@ function! s:make_events()
 	return self
 endfunction
 
-let s:events = s:make_events()
 
 
 " Save
