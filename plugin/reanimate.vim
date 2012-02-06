@@ -8,7 +8,7 @@ set cpo&vim
 
 
 " global variable
-let g:reanimate_save_dir          = get(g:, "reanimate_save_dir", "~/reanimate/save_dir")
+let g:reanimate_save_dir          = get(g:, "reanimate_save_dir", expand("~/reanimate/save_dir"))
 let g:reanimate_default_save_name = get(g:, "reanimate_default_save_name", "latest")
 let g:reanimate_sessionoptions    = get(g:, "reanimate_sessionoptions", &sessionoptions)
 let g:reanimate_disables          = get(g:, "reanimate_disables", [])
