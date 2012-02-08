@@ -25,7 +25,7 @@ function! reanimate#path_to_point(path)
 endfunction
 
 function! reanimate#save_points_path()
-	return filter(split(globpath(s:save_dir(), "*"), "\n"), "!s:empty_directory(v:val.'/latest')")
+	return map(filter(split(globpath(s:save_dir(), "*"), "\n"), "!s:empty_directory(v:val.'/latest')"), 'substitute(v:val, "\\", "\/", "g")')
 endfunction
 
 function! reanimate#save_points()

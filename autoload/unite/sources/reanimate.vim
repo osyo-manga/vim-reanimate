@@ -39,7 +39,8 @@ function! s:source.gather_candidates(args, context)
 \		"word" : s:latest_time(v:val)."  [ ".reanimate#path_to_point(v:val)." ]",
 \		"kind" : "reanimate",
 \		"action__point" : reanimate#path_to_point(v:val),
-\		"action__directory"  : v:val
+\		"action__path"  : v:val,
+\		"action__directory" : v:val
 \}')
 endfunction
 
