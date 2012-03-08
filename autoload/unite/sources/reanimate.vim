@@ -45,6 +45,7 @@ function! s:source.gather_candidates(args, context)
 endfunction
 
 function! s:source.hooks.on_syntax(args, context)
+	syntax clear
 	syntax match uniteSource__Reanimate_Point
 		\ /\[\zs.*\ze]/ containedin=uniteSource_reanimate
 	highlight uniteSource__Reanimate_Point term=bold gui=bold
