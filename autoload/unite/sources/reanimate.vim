@@ -33,7 +33,7 @@ function! s:source.gather_candidates(args, context)
 	let new_save = a:context.default_action == "reanimate_save" ? [{
 \		"word" : "[new save]",
 \		"kind" : "reanimate",
-\}]
+\	}]
 \ : []
 	return new_save + map(reanimate#save_points_path(), '{
 \		"word" : s:latest_time(v:val)."  [ ".reanimate#path_to_point(v:val)." ]",
@@ -45,14 +45,15 @@ function! s:source.gather_candidates(args, context)
 endfunction
 
 function! s:source.hooks.on_syntax(args, context)
-	syntax clear
-	syntax match uniteSource__Reanimate_Point
-		\ /\[\zs.*\ze]/ containedin=uniteSource_reanimate
-	highlight uniteSource__Reanimate_Point term=bold gui=bold
+" 	syntax clear
 
 	syntax match uniteSource__Reanimate_Time
 		\ /\s\+\zs([^)]*)/ contained containedin=uniteSource_reanimate
 	highlight default link uniteSource__Reanimate_Time Statement
+
+	syntax match uniteSource__Reanimate_Point
+		\ /\[\zs.*\ze]/ containedin=uniteSource_reanimate
+	highlight uniteSource__Reanimate_Point term=bold gui=bold
 endfunction
 
 
