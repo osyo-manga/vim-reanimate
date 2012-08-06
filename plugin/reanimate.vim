@@ -25,7 +25,7 @@ command! -nargs=? -complete=customlist,s:save_point_completelist
 
 command!
 \	ReanimateSaveCursorHold
-\	if s:is_saved() | call reanimate#save(<f-args>) | endif
+\	if reanimate#is_saved() | call reanimate#save(<f-args>) | endif
 
 command!
 \	ReanimateSaveInput
