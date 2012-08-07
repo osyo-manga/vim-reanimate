@@ -1,0 +1,233 @@
+*reanimate.txt*	Vim の保存・復元を行う Vimプラグインです。
+
+
+
+
+==============================================================================
+目次						*reanimate-contents*
+
+概要				|reanimate-introduction|
+使い方				|reanimate-usage|
+インターフェース		|reanimate-interface|
+  コマンド			  |reanimate-commands|
+  関数				  |reanimate-functions|
+  untie				  |reanimate-unite|
+設定				|reanimate-setting|
+  変数				  |reanimate-variables|
+保存・復元データ		|reanimate-save-data|
+
+
+==============================================================================
+概要						*reanimate-introduction*
+
+|reanimate| は現在の Vim の状況を名前を付けて保存し、復元を行うプラグインです。
+
+						*reanimate-synopsis*
+>
+	" 現在の状態を保存する
+	:ReanimateSave
+
+	" 保存した状態を復元する
+	:ReanimateLoad
+
+	" 現在の状態を名前を付けて保存する
+	:ReanimateSave {保存名}
+
+	" 指定した名前の状態を復元する
+	:ReanimateLoad {復元名}
+	
+	" unite.vim で保存しているデータの一覧を出力する
+	:Unite reanimate
+<
+
+
+==============================================================================
+使い方						*reanimate-usage*
+
+|:ReanimateSave| で保存を行い |:ReanimateLoad| で復元を行います。
+|:ReanimateSave| では、名前を指定して保存を行うことが出来るので、複数の状態を
+保存して、復元することが出来ます。
+
+>
+	" reanimate という名前で保存を行い
+	:ReanimateSave reanimate
+
+	" reanimate という名前で復元を行う
+	:ReanimateLoad reanimate
+<
+
+保存されているデータの一覧は unite.vim を使用して出力する事が出来ます。
+参照: |reanimate-unite|
+
+
+==============================================================================
+インターフェース				*reanimate-interface*
+
+------------------------------------------------------------------------------
+コマンド					*reanimate-commands*
+
+:ReanimateSave [{名前}]				*:ReanimateSave*
+	現在の状態を名前を付けて保存します。
+	|:ReanimateLoad| で保存した状態の復元を行います。
+	引数がない場合は |g:reanimate_default_save_name| の値が使用されます。
+
+:ReanimateLoad [{名前}]				*:ReanimateLoad*
+	保存した状態の復元を行います。
+	|ReanimateSave| で状態の保存を行います。
+	引数がない場合は |g:reanimate_default_save_name| の値が使用されます。
+
+:ReanimateSaveInput				*:ReanimateSaveInput*
+	コマンドの呼び出し時に名前の入力を行なって保存します。
+	それ以外は |:ReanimateSave| と同じです。
+
+:ReanimateLoadInput				*:ReanimateLoadInput*
+	コマンドの呼び出し時に名前の入力を行なって保存します。
+	それ以外は |:ReanimateLoad| と同じです。
+
+:ReanimateSaveCursorHold			*:ReanimateSaveCursorHold*
+	|autocmd| |CursorHold| で保存を行う場合に使用するコマンド
+	|autocmd| |CursorHold| で自動的に保存を行いたい場合は、
+	|:ReanimateSave| ではなく |:ReanimateSaveCursorHold| を使用して下さ
+	い。
+
+
+------------------------------------------------------------------------------
+関数						*reanimate-functions*
+
+reanimate#save([{保存名}])			*reanimate#save()*
+	|:ReanimateSave| の関数版です。
+	引数がない場合は |g:reanimate_default_save_name| の値が使用されます。
+
+reanimate#load([{保存名}])			*reanimate#load()*
+	|:ReanimateLoad| の関数版です。
+	引数がない場合は |g:reanimate_default_save_name| の値が使用されます。
+
+
+------------------------------------------------------------------------------
+|untie.vim|					*untie-reanimate*
+
+Shougo 氏が作成された |unite.vim| を使用することで保存されているデータの一覧を出
+力し、復元する事が出来ます。
+
+unite.vim - github : https://github.com/Shougo/unite.vim
+
+image : http://f.hatena.ne.jp/osyo-manga/20120214213757
+
+>
+	:Unite reanimate
+<
+
+
+unite-actions					*reanimate-unite-actions*
+
+|unite-reanimate| で使用出来る |unite-actions| がいくつが定義されています。
+
+- "reanimate_load"
+	選択した名前を復元する。
+	それ以外は |:ReanimateLoad| と同じです。
+
+- "reanimate_save"
+	選択した名前で保存する。
+	それ以外は |:ReanimateSave| と同じです。
+
+- "reanimate_new_save"
+	名前を付けて保存する。
+	これは選択した名前は関係ないです。
+
+
+また、|unite-reanimate| はデフォルトアクションが設定されていません。
+上記のアクションを使用する場合は、|unite.vim| のアクションメニュー(A)から上記のアクションを選択して使用します。
+もしくは、下記のように |unite.vim| の呼び出し時に default-action を設定して使用します。
+
+>
+	" デフォルトで保存する
+	:Unite reanimate -default-action=reanimate_load
+	
+	" デフォルトで復元する
+	:Unite reanimate -default-action=reanimate_save
+<
+
+
+==============================================================================
+設定						*reanimate-setting*
+
+------------------------------------------------------------------------------
+変数						*reanimate-variables*
+
+g:reanimate_save_dir				*g:reanimate_save_dir*
+	状態を保存するディレクトリです。
+>
+	" Default
+	let g:reanimate_save_dir = "~/reanimate/save_dir"
+<
+
+g:reanimate_default_save_name		*g:reanimate_default_save_name*
+	|ReanimateSave| で引数がなかった場合に使用されるデフォルトの保存名で
+	す。
+>
+	" Default
+	let g:reanimate_default_save_name = "latest"
+<
+
+g:reanimate_sessionoptions			*g:reanimate_sessionoptions*
+	セッションの保存時に使用されるオプションです。
+	設定するオプションは |'sessionoptions'| と同じです。
+>
+	" Default
+	let g:reanimate_sessionoptions = &sessionoptions
+	
+	" Example
+	let g:reanimate_sessionoptions="curdir,folds,help,slash,tabpages,winsize"
+<
+
+g:reanimate_disables				*g:reanimate_disables*
+	保存・復元を行わないデータを無効にする為の変数です。
+	各データの詳細は |reanimate-save-data| を参照して下さい。
+>
+	" Default
+	let g:g:reanimate_disables = []
+	
+	" Example
+	" session と window の保存・復元が行われません
+	let g:g:reanimate_disables = ["reanimate_session", "reanimate_window"]
+<
+
+
+==============================================================================
+保存・復元データ				*reanimate-save-data*
+
+保存・復元が行われるデータです。
+このデータは |g:reanimate_disables| に設定することで無効することが出来ます。
+
+
+- "session"					*reanimate-session*
+
+|session| のデータを保存し、復元を行います。
+|session| のオプションは |g:reanimate_sessionoptions| の値が参照されます。
+
+Disable: >
+	reanimate_session
+<
+
+
+- "viminfo"					*reanimate-viminfo*
+
+|viminfo| のデータを保存し、復元を行います。
+
+Disable: >
+	reanimate_viminfo
+<
+
+
+- "window"					*reanimate-window*
+
+gvim のウィンドウ位置とサイズを保存し、復元を行います。
+参照: http://vim-users.jp/2010/01/hack120/
+
+Disable: >
+	reanimate_window
+<
+
+
+==============================================================================
+vim:tw=78:fo=tcq2mM:ts=8:ft=help:norl
