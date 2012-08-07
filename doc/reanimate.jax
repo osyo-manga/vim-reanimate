@@ -177,7 +177,7 @@ g:reanimate_sessionoptions			*g:reanimate_sessionoptions*
 	let g:reanimate_sessionoptions = &sessionoptions
 	
 	" Example
-	let g:reanimate_sessionoptions="curdir,folds,help,slash,tabpages,winsize"
+	let g:reanimate_sessionoptions = "curdir,folds,help,slash,tabpages,winsize"
 <
 
 g:reanimate_disables				*g:reanimate_disables*
@@ -185,11 +185,11 @@ g:reanimate_disables				*g:reanimate_disables*
 	各データの詳細は |reanimate-save-data| を参照して下さい。
 >
 	" Default
-	let g:g:reanimate_disables = []
+	let g:reanimate_disables = []
 	
 	" Example
 	" session と window の保存・復元が行われません
-	let g:g:reanimate_disables = ["reanimate_session", "reanimate_window"]
+	let g:reanimate_disables = ["reanimate_session", "reanimate_window"]
 <
 
 
