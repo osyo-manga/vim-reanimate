@@ -84,7 +84,7 @@
 	コマンドの呼び出し時に名前の入力を行なって保存します。
 	それ以外は |:ReanimateLoad| と同じです。
 
-:ReanimateLoadLatest				*:ReanimateLoadInput*
+:ReanimateLoadLatest				*:ReanimateLoadLatest*
 	最後に保存した名前で復元を行います。
 	※ :ReanimateLoad latest ではないので注意
 
