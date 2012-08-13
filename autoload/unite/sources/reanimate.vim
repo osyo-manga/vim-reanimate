@@ -11,13 +11,17 @@ function! s:time_format()
 	return "(%Y/%m/%d %H:%M:%S)"
 endfunction
 
+function! s:time_to_string(time)
+	return a:time != -1 && exists("*strftime") ? strftime(s:time_format(), a:time) : ""
+endfunction
+
 function! s:latest_time_str(dir)
-	let time = getftime(a:dir)
-	return time != -1 && exists("*strftime") ? strftime(s:time_format(), time) : ""
+	return s:time_to_string(getftime(a:dir))
 endfunction
 
 function! s:latest_time(dir)
-	return s:latest_time_str(a:dir)
+	return sort(map(split(globpath(a:dir, "*"), "\n"), "getftime(v:val)"))[-1]
+" 	return s:latest_time_str(a:dir)
 endfunction
 
 let s:source = {
@@ -26,8 +30,13 @@ let s:source = {
 \	"syntax" : "uniteSource_reanimate",
 \	"hooks" : {},
 \	"is_selectable" : 0,
-\	"action_table" : {}
+\	"action_table" : {},
 \}
+
+
+function! s:time_sorter(a, b)
+	return a:a.time < a:b.time ? 1 : -1
+endfunction
 
 function! s:source.gather_candidates(args, context)
 	let new_save = a:context.default_action == "reanimate_save" ? [{
@@ -35,12 +44,18 @@ function! s:source.gather_candidates(args, context)
 \		"kind" : "reanimate",
 \	}]
 \ : []
-	return new_save + map(reanimate#save_points_path(), '{
-\		"word" : s:latest_time(v:val)."  [ ".reanimate#path_to_point(v:val)." ]",
+
+	return new_save + map(sort(map(reanimate#save_points_path(), '{
+\		"time"  : s:latest_time(v:val),
+\		"point" : reanimate#path_to_point(v:val),
+\		"path"  : v:val,
+\	}'), "s:time_sorter"),
+\	'{
+\		"word" : s:time_to_string(v:val.time)."  [ ".v:val.point." ]",
 \		"kind" : "reanimate",
-\		"action__point" : reanimate#path_to_point(v:val),
-\		"action__path"  : v:val,
-\		"action__directory" : v:val
+\		"action__point" : v:val.point,
+\		"action__path"  : v:val.path,
+\		"action__directory" : v:val.path
 \}')
 endfunction
 
