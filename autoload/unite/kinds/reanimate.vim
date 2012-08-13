@@ -41,6 +41,7 @@ function! s:kind.action_table.reanimate_save.func(candidate)
 	call reanimate#save(new_point)
 endfunction
 
+
 let s:kind.action_table.reanimate_load = {
 \	"description" : "Reanimate Load",
 \	"is_selectable" : 0
@@ -48,6 +49,17 @@ let s:kind.action_table.reanimate_load = {
 
 function! s:kind.action_table.reanimate_load.func(candidate)
 	call reanimate#load(get(a:candidate, "action__point", ""))
+endfunction
+
+
+let s:kind.action_table.reanimate_switch = {
+\	"description" : "Reanimate Switc",
+\	"is_selectable" : 0
+\}
+
+function! s:kind.action_table.reanimate_switch.func(candidate)
+	silent execute ":ReanimateSwitch" get(a:candidate, "action__point", "")
+" 	call reanimate#load(get(a:candidate, "action__point", ""))
 endfunction
 
 

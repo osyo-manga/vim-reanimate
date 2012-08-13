@@ -90,6 +90,9 @@
 	|:ReanimateSave| ではなく |:ReanimateSaveCursorHold| を使用して下さ
 	い。
 
+:ReanimateSwitch [{名前}]			*:ReanimateSwitch*
+	保存を行なってから復元を行います。
+
 
 ------------------------------------------------------------------------------
 関数						*reanimate-functions*
@@ -133,6 +136,10 @@ unite-actions					*reanimate-unite-actions*
 - "reanimate_new_save"
 	名前を付けて保存する。
 	これは選択した名前は関係ないです。
+
+- "reanimate_switch"
+	復元する前に現在の状態の保存を行い、その後、選択した名前で復元する。
+	それ以外は |:ReanimateSwitch| と同じです。
 
 
 また、|unite-reanimate| はデフォルトアクションが設定されていません。

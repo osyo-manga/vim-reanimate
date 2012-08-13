@@ -14,7 +14,6 @@ let g:reanimate_sessionoptions    = get(g:, "reanimate_sessionoptions", &session
 let g:reanimate_disables          = get(g:, "reanimate_disables", [])
 
 
-
 function! s:save_point_completelist(arglead, ...)
 	return filter(reanimate#save_points(), "v:val =~? '".a:arglead."'")
 endfunction
@@ -34,11 +33,16 @@ command!
 
 command! -nargs=? -complete=customlist,s:save_point_completelist
 \	ReanimateLoad
-\	:call reanimate#load(<f-args>)
+\	call reanimate#load(<f-args>)
 
 command!
 \	ReanimateLoadInput
 \	call reanimate#load(input("Input SavePoint Name:"))
+
+
+command! -nargs=? -complete=customlist,s:save_point_completelist
+\	ReanimateSwitch
+\	call reanimate#save() | call reanimate#load(<f-args>)
 
 
 let &cpo = s:save_cpo
