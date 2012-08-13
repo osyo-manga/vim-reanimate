@@ -39,6 +39,9 @@ command!
 \	ReanimateLoadInput
 \	call reanimate#load(input("Input SavePoint Name:"))
 
+command!
+\	ReanimateLoadLatest
+\	call reanimate#load(reanimate#latest_save_point())
 
 command! -nargs=? -complete=customlist,s:save_point_completelist
 \	ReanimateSwitch

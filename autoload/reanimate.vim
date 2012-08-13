@@ -24,6 +24,22 @@ function! reanimate#path_to_point(path)
 	return fnamemodify(a:path, ":t:r")
 endfunction
 
+function! reanimate#latest_time(point)
+	return sort(map(split(globpath(reanimate#point_to_path(a:point), "*"), "\n"), "getftime(v:val)"))[-1]
+endfunction
+
+
+function! s:time_sorter(a, b)
+	return a:a.time < a:b.time ? 1 : -1
+endfunction
+
+function! reanimate#latest_save_point()
+	return sort(map(reanimate#save_points(), '{
+\		"time"  : reanimate#latest_time(v:val),
+\		"point" : v:val,
+\	}'), "s:time_sorter")[0].point
+endfunction
+
 function! reanimate#save_points_path()
 	return map(filter(split(globpath(s:save_dir(), "*"), "\n"), "!s:empty_directory(v:val.'/latest')"), 'substitute(v:val, "\\", "\/", "g")')
 endfunction
@@ -31,7 +47,6 @@ endfunction
 function! reanimate#save_points()
 	return map(reanimate#save_points_path(), "reanimate#path_to_point(v:val)")
 endfunction
-
 
 
 function! reanimate#save(...)

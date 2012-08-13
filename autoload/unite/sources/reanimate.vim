@@ -15,15 +15,6 @@ function! s:time_to_string(time)
 	return a:time != -1 && exists("*strftime") ? strftime(s:time_format(), a:time) : ""
 endfunction
 
-function! s:latest_time_str(dir)
-	return s:time_to_string(getftime(a:dir))
-endfunction
-
-function! s:latest_time(dir)
-	return sort(map(split(globpath(a:dir, "*"), "\n"), "getftime(v:val)"))[-1]
-" 	return s:latest_time_str(a:dir)
-endfunction
-
 let s:source = {
 \	"name" : "reanimate",
 \	"description" : "reanimate",
@@ -46,7 +37,7 @@ function! s:source.gather_candidates(args, context)
 \ : []
 
 	return new_save + map(sort(map(reanimate#save_points_path(), '{
-\		"time"  : s:latest_time(v:val),
+\		"time"  : reanimate#latest_time(reanimate#path_to_point(v:val)),
 \		"point" : reanimate#path_to_point(v:val),
 \		"path"  : v:val,
 \	}'), "s:time_sorter"),
