@@ -85,8 +85,8 @@
 	それ以外は |:ReanimateLoad| と同じです。
 
 :ReanimateLoadLatest				*:ReanimateLoadLatest*
-	最後に保存した名前で復元を行います。
-	※ :ReanimateLoad latest ではないので注意
+	最後に保存した（更新日が一番新しい）名前で復元を行います。
+	※ :ReanimateLoad latest とは違うので注意
 
 :ReanimateSaveCursorHold			*:ReanimateSaveCursorHold*
 	|autocmd| |CursorHold| で保存を行う場合に使用するコマンド
