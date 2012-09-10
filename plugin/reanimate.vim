@@ -48,5 +48,12 @@ command! -nargs=? -complete=customlist,s:save_point_completelist
 \	call reanimate#save() | call reanimate#load(<f-args>)
 
 
+command! -nargs=? -complete=customlist,s:save_point_completelist
+\	ReanimateEditVimrcLocal
+\	call reanimate#events#vimrc_local#edit(<f-args>)
+
+
+
+
 let &cpo = s:save_cpo
 unlet s:save_cpo

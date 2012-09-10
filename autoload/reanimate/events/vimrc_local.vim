@@ -2,6 +2,15 @@ let s:save_cpo = &cpo
 set cpo&vim
 scriptencoding utf-8
 
+
+function! reanimate#events#vimrc_local#edit(...)
+	let point = a:0 ? a:1 : reanimate#last_point()
+	let target = reanimate#point_to_path(point)."/".s:vimrc_local_filename().".vim"
+	split split
+	set filetype=vim
+	execute "edit" target
+endfunction
+
 function! reanimate#events#vimrc_local#define()
 	return s:event
 endfunction
@@ -29,6 +38,7 @@ function! s:event.load_pre(context)
 endfunction
 
 function! s:event.load(context)
+	echo a:context.path
 	call s:vimrc_local(a:context.path, s:vimrc_local_filename().".vim")
 endfunction
 

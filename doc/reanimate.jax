@@ -2,7 +2,6 @@
 
 
 
-
 ==============================================================================
 目次						*reanimate-contents*
 
@@ -73,7 +72,7 @@
 
 :ReanimateLoad [{名前}]				*:ReanimateLoad*
 	保存した状態の復元を行います。
-	|ReanimateSave| で状態の保存を行います。
+	|:ReanimateSave| で状態の保存を行います。
 	引数がない場合は |g:reanimate_default_save_name| の値が使用されます。
 
 :ReanimateSaveInput				*:ReanimateSaveInput*
@@ -96,6 +95,10 @@
 
 :ReanimateSwitch [{名前}]			*:ReanimateSwitch*
 	保存を行なってから復元を行います。
+
+:ReanimateEditVimrcLocal			*:ReanimateEditVimrcLocal*
+	vimrc_local.vim の編集を行います。
+	vimrc_local.vim については |reanimate-vimrc_local| を参照して下さい。
 
 
 ------------------------------------------------------------------------------
@@ -147,8 +150,10 @@ unite-actions					*reanimate-unite-actions*
 
 
 また、|unite-reanimate| はデフォルトアクションが設定されていません。
-上記のアクションを使用する場合は、|unite.vim| のアクションメニュー(A)から上記のアクションを選択して使用します。
-もしくは、下記のように |unite.vim| の呼び出し時に default-action を設定して使用します。
+上記のアクションを使用する場合は、|unite.vim| のアクションメニュー(Aキー)
+から上記のアクションを選択して使用します。
+もしくは、下記のように |unite.vim| の呼び出し時に default-action を設定して使用
+します。
 
 >
 	" デフォルトで保存する
@@ -238,6 +243,15 @@ gvim のウィンドウ位置とサイズを保存し、復元を行います。
 Disable: >
 	reanimate_window
 <
+
+
+==============================================================================
+vimrc_local					*reanimate-vimrc_local*
+
+各データのディレクトリの直下に vimrc_local.vim ファイルを作成する
+ことで、保存データを復元する際に vimrc_local.vim が読み込まれます。
+各データごとに固有の設定を行いたい場合にはこれを使用して下さい。
+vimrc_local.vim の編集は |:ReanimateEditVimrcLocal| で行えます。
 
 
 ==============================================================================
