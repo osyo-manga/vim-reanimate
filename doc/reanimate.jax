@@ -10,10 +10,16 @@
 インターフェース		|reanimate-interface|
   コマンド			  |reanimate-commands|
   関数				  |reanimate-functions|
-  untie				  |reanimate-unite|
+  |untie.vim|			  |untie-reanimate|
 設定				|reanimate-setting|
   変数				  |reanimate-variables|
 保存・復元データ		|reanimate-save-data|
+vimrc_local			|reanimate-vimrc_local|
+イベントのフック		|reanimate-events|
+  イベントの登録		  |reanimate-events-register|
+  コンテキスト			  |reanimate-events-context|
+  フックポイント		  |reanimate-events-point|
+  保存を行うデータに関して	  |reanimate-events-savedata|
 
 
 ==============================================================================
@@ -252,6 +258,201 @@ vimrc_local					*reanimate-vimrc_local*
 ことで、保存データを復元する際に vimrc_local.vim が読み込まれます。
 各データごとに固有の設定を行いたい場合にはこれを使用して下さい。
 vimrc_local.vim の編集は |:ReanimateEditVimrcLocal| で行えます。
+
+
+==============================================================================
+イベントのフック				*reanimate-events*
+
+|reanimate.vim| では各処理が行われるタイミングに処理をフックする事が出来ます。
+
+
+------------------------------------------------------------------------------
+イベントの登録					*reanimate-events-register*
+
+イベントを登録する場合、
+
+1．|reanimate-events-point| + 関数の参照を渡して定義する
+2．各 |reanimate-events-point| 名の関数を定義した辞書を登録
+3．autoload/reanimate/events/{events-name}.vim を作成する
+
+の3つの方法があります。
+
+
+- 1．|reanimate-events-point| + 関数の参照を渡して定義する
+
+reanimate({point-name}, {event-name}, {Funcref}) で任意のポイントに関数をフッ
+クします。
+関数には |reanimate-events-context| を引数で受け取ります。
+
+Example >
+	" メッセージ出力
+	" 関数の引数には context を受け取る
+	function! SuccessMessage(context)
+	echom "復元が成功しました"
+	endfunction
+	
+	" 復元が終わった後に SuccessMessage が呼ばれる
+	call reanimate#hook("load_post", "success_message", function("SuccessMessage") )
+<
+
+
+- 2．|reanimate-events-point| 名の関数を定義した辞書を登録
+
+reanimate({event-dict}) で任意のポイントに処理をフッ
+必要な |reanimate-events-point| の名前を持った辞書関数を定義を定義し、
+reanimate#hook({event-dict}) に渡すことで登録を行うことができます。
+また、辞書関数には |reanimate-events-context| を引数で受け取ります。
+
+Example >
+	" session の保存、復元を行う
+	let s:event = {
+	\	"name" : "session",
+	\}
+	
+	" 必要なポイント名の関数を定義
+	" 引数に context を受け取る
+	
+	" load
+	function! s:event.load(context)
+		" session の読み込み処理を記述
+		" 読み込み先は context.path のディレクトリパスを参照
+	endfunction
+	
+	" save
+	function! s:event.save(context)
+		" session の保存処理を記述
+		" 保存先は context.path のディレクトリパスを参照
+	endfunction
+	endfunction
+	
+	" reanimate.vim に登録
+	call reanimate#hook(s:event)
+	unlet s:event
+<
+
+
+- 3．autoload/reanimate/events/{events-name}.vim を作成する
+
+autoload/reanimate/events/{events-name}.vim ファイル内に 2．で作成したような
+辞書を返す reanimate#events#{events-name}#define() 関数を作成します。
+これで |reanimate.vim| の初回ロード時に自動的に登録されます。
+
+Example >
+	" autoload/reanimate/events/window.vim
+
+	function! reanimate#events#window#define()
+		return s:event
+	endfunction
+	
+	
+	let s:event = {
+	\	"name" : "reanimate_window"
+	\}
+	" ... s:event の実装
+<
+
+------------------------------------------------------------------------------
+コンテキスト				*reanimate-events-context*
+
+各イベントの関数で受け取る context は次のようなデータを保持しています。
+
+- "point"
+  保存名です。
+
+- "path"
+  保存するデータのディレクトリパスです
+
+- "point_path"
+  全てのデータが保存されているディレクトリです。
+  path とは階層が異なるので注意して下さい。
+
+
+------------------------------------------------------------------------------
+フックポイント				*reanimate-events-point*
+
+各イベントが呼ばれるタイミングです。
+辞書関数の名前や登録時に使用される名前にもなります。
+
+
+- "save_leave"					*reanimate-events-point-save_leave*
+  現在とは違う名前で保存する場合に呼ばれます。
+  これは |reanimate-events-point-save_pre| の前に呼ばれます。
+
+- "save_pre"					*reanimate-events-point-save_pre*
+  |reanimate-events-point-save| の前に呼ばれます。
+  保存する前に何か問題がある場合に |throw| することで、以降の処理を中断するこ
+  とができます。
+
+- "save"					*reanimate-events-point-save*
+  保存が行われる時です。
+  この時にデータの保存を行なって下さい。
+
+- "save_post"					*reanimate-events-point-save_post*
+  |reanimate-events-point-save| の後に呼ばれます。
+
+- "save_enter"					*reanimate-events-point-save_enter*
+  現在とは違う名前で保存する場合に呼ばれます。
+  これは |reanimate-events-point-save_post| の後に呼ばれます。
+
+- "save_failed"					*reanimate-events-point-save_failed*
+  |reanimate-events-point-save_pre|
+  |reanimate-events-point-save|
+  |reanimate-events-point-save_post|
+  のいずれかで例外が発生した場合に呼ばれます。
+
+
+- "load_leave"					*reanimate-events-point-load_leave*
+  現在とは違う名前で保存する場合に呼ばれます。
+  これは |reanimate-events-point-load_pre| の前に呼ばれます。
+
+- "load_pre"					*reanimate-events-point-load_pre*
+  |reanimate-events-point-load| の前に呼ばれます。
+  保存する前に何か問題がある場合に |throw| することで、以降の処理を中断するこ
+  とができます。
+
+- "load"					*reanimate-events-point-load*
+  読み込みが行われる時です。
+  この時に |reanimate-events-point-load| で保存したデータの読み込みを行なって
+  下さい。
+
+- "load_post"					*reanimate-events-point-load_post*
+  |reanimate-events-point-load| の後に呼ばれます。
+
+- "load_enter"					*reanimate-events-point-load_enter*
+  現在とは違う名前で保存する場合に呼ばれます。
+  これは |reanimate-events-point-load_post| の後に呼ばれます。
+
+- "load_failed"					*reanimate-events-point-load_failed*
+  |reanimate-events-point-load_pre|
+  |reanimate-events-point-load|
+  |reanimate-events-point-load_post|
+  のいずれかで例外が発生した場合に呼ばれます。
+
+
+------------------------------------------------------------------------------
+保存を行うデータに関して			*reanimate-events-savedata*
+
+|reanimate.vim| では各保存データごとに保存する場所が決まっています。
+イベント内で独自のデータを保存したい場合は、context.path のディレクトリに保存
+を行なって下さい。
+
+Example >
+	" viminfo を保存
+	function! s:event.save(context)
+		let dir = a:context.path
+		if !filereadable(dir.'/viminfo.vim') || filewritable(dir.'/viminfo.vim')
+			execute "wviminfo!  ".dir."/viminfo.vim"
+		endif
+	endfunction
+
+	" viminfo を復元
+	function! s:event.load(context)
+		let dir = a:context.path
+		if filereadable(dir."/viminfo.vim")
+			execute "rviminfo ".dir."/viminfo.vim"
+		endif
+	endfunction
+<
 
 
 ==============================================================================
