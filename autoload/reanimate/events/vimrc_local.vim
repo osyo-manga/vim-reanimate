@@ -38,7 +38,6 @@ function! s:event.load_pre(context)
 endfunction
 
 function! s:event.load(context)
-	echo a:context.path
 	call s:vimrc_local(a:context.path, s:vimrc_local_filename().".vim")
 endfunction
 

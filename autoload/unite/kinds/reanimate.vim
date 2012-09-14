@@ -58,7 +58,7 @@ let s:kind.action_table.reanimate_switch = {
 \}
 
 function! s:kind.action_table.reanimate_switch.func(candidate)
-	silent execute ":ReanimateSwitch" get(a:candidate, "action__point", "")
+	execute ":ReanimateSwitch" get(a:candidate, "action__point", "")
 " 	call reanimate#load(get(a:candidate, "action__point", ""))
 endfunction
 
