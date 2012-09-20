@@ -51,6 +51,12 @@ endfunction
 
 function! reanimate#save(...)
 	let new_point = a:0 && !empty(a:1) ? a:1 : s:last_point()
+
+	" 保存名がないなら何もしないで終了
+	if empty(new_point)
+		return
+	endif
+
 	let context = s:context(new_point)
 
 	" 違うポイントに保存する場合

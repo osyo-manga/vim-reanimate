@@ -191,6 +191,18 @@ g:reanimate_default_save_name		*g:reanimate_default_save_name*
 	let g:reanimate_default_save_name = "latest"
 <
 
+	また、ここに設定されている文字列が空の場合、|:ReanimateSave| に引数が
+	ない場合保存が行われなくなります。
+>
+	let g:reanimate_default_save_name = "latest"
+	" g:reanimate_default_save_name で保存される
+	:ReanimateSave
+
+	let g:reanimate_default_save_name = ""
+	保存が行われない
+	:ReanimateSave
+<
+
 g:reanimate_sessionoptions			*g:reanimate_sessionoptions*
 	セッションの保存時に使用されるオプションです。
 	設定するオプションは |'sessionoptions'| と同じです。
