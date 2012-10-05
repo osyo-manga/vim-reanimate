@@ -63,23 +63,20 @@ function! s:kind.action_table.reanimate_switch.func(candidate)
 endfunction
 
 
-" let s:kind.action_table.reanimate_delete = {
-" \	"description" : "Reanimate Delete Save",
-" \	"is_selectable" : 1
-" \}
-" 
-" function! s:kind.action_table.reanimate_delete.func(candidate)
-" 	if input("Really force delete save ? [y/n]:") == "y"
-" 		for candidate in a:candidate
-" 			let point = get(candidate, "action__point", "")
-" 			let path  = s:point_to_path(point)
-" 			echo, path
-" 			if !delete(path)
-" 				echom "deleted ".point
-" 			endif
-" 		endfor
-" 	endif
-" endfunction
+let s:kind.action_table.delete = {
+\	"description" : "Reanimate Delete Save",
+\	"is_selectable" : 1,
+\	"is_quit" : 0,
+\}
+
+function! s:kind.action_table.delete.func(candidates)
+	if input("Really force delete save ? [y/n]:") == "y"
+		call unite#mappings#do_action('vimfiler__delete', a:candidates, {
+\			'vimfiler__current_directory' : g:reanimate_save_dir,
+\			})
+		call unite#redraw(winnr())
+	endif
+endfunction
 
 
 
