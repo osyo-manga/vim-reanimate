@@ -52,6 +52,10 @@ command! -nargs=? -complete=customlist,s:save_point_completelist
 \	ReanimateEditVimrcLocal
 \	call reanimate#events#vimrc_local#edit(<f-args>)
 
+command!
+\	ReanimateUnload
+\	call reanimate#unload()
+
 
 
 

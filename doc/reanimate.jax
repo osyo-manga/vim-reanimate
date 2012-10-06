@@ -106,6 +106,12 @@ vimrc_local			|reanimate-vimrc_local|
 	vimrc_local.vim の編集を行います。
 	vimrc_local.vim については |reanimate-vimrc_local| を参照して下さい。
 
+:ReanimateUnload				*:ReanimateUnload*
+	データが読み込まれていない（Vim起動直後と同じ）状態にします。
+	|:ReanimateUnload| を使用した場合、現在のデータと関連付けがなくなって
+	しまうので、このコマンドを使用する前に必ず |:ReanimateSave| 等でデータ
+	の保存を行なって下さい。
+
 
 ------------------------------------------------------------------------------
 関数						*reanimate-functions*

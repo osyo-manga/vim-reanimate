@@ -90,6 +90,12 @@ function! reanimate#load(...)
 	endif
 endfunction
 
+
+function! reanimate#unload()
+	let s:last_point = ""
+endfunction
+
+
 function! reanimate#is_saved()
 	return s:is_saved()
 endfunction
