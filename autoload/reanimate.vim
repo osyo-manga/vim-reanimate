@@ -34,10 +34,10 @@ function! s:time_sorter(a, b)
 endfunction
 
 function! reanimate#latest_save_point()
-	return sort(map(reanimate#save_points(), '{
+	return (sort(map(reanimate#save_points(), '{
 \		"time"  : reanimate#latest_time(v:val),
 \		"point" : v:val,
-\	}'), "s:time_sorter")[0].point
+\	}'), "s:time_sorter") + [{"point" : ""}])[0].point
 endfunction
 
 function! reanimate#save_points_path()
