@@ -269,6 +269,15 @@ Disable: >
 <
 
 
+- "quickfix"					*reanimate-quickfix*
+
+quickfix のデータを保存し、復元を行います。
+
+Disable: >
+	reanimate_quickfix
+<
+
+
 ==============================================================================
 vimrc_local					*reanimate-vimrc_local*
 
