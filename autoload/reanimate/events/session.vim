@@ -15,7 +15,7 @@ let s:event = {
 function! s:event.load(context)
 	let dir = a:context.path
 	if filereadable(dir."/session.vim")
-		execute "source ".dir."/session.vim"
+		source `=dir."/session.vim"`
 	endif
 endfunction
 
@@ -29,7 +29,7 @@ function! s:event.save(context)
 		endif
 	finally
 		let &sessionoptions = tmp
-	endif
+	endtry
 endfunction
 
 

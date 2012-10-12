@@ -15,7 +15,8 @@ let s:event = {
 function! s:event.load(context)
 	let dir = a:context.path
 	if filereadable(dir."/vimwinpos.vim") && has("gui")
-		execute "source ".dir."/vimwinpos.vim"
+		source `=dir."/vimwinpos.vim"`
+" 		execute "source ".dir."/vimwinpos.vim"
 	endif
 endfunction
 

@@ -15,7 +15,7 @@ let s:event = {
 function! s:event.load(context)
 	let dir = a:context.path
 	if filereadable(dir."/quickfix.vim")
-		execute "source ".dir."/quickfix.vim"
+		source `=dir."/quickfix.vim"`
 	endif
 endfunction
 
