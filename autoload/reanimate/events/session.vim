@@ -22,9 +22,13 @@ endfunction
 function! s:event.save(context)
 	let dir = a:context.path
 	let tmp = &sessionoptions
-	execute "set sessionoptions=".g:reanimate_sessionoptions
-	if !filereadable(dir.'/session.vim') || filewritable(dir.'/session.vim')
-		execute "mksession! ".dir."/session.vim"
+	try
+		let &sessionoptions = g:reanimate_sessionoptions
+		if !filereadable(dir.'/session.vim') || filewritable(dir.'/session.vim')
+			execute "mksession! ".dir."/session.vim"
+		endif
+	finally
+		let &sessionoptions = tmp
 	endif
 endfunction
 
