@@ -53,7 +53,7 @@ endfunction
 
 
 let s:kind.action_table.reanimate_switch = {
-\	"description" : "Reanimate Switc",
+\	"description" : "Reanimate Switch",
 \	"is_selectable" : 0
 \}
 
