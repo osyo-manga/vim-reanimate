@@ -79,6 +79,19 @@ function! s:kind.action_table.delete.func(candidates)
 endfunction
 
 
+let s:kind.action_table.reanimate_rename = {
+\	"description" : "rename save point",
+\	"is_selectable" : 0
+\}
+
+function! s:kind.action_table.reanimate_rename.func(candidate)
+	let to = input("Input new point name. ". get(a:candidate, "action__point", "") ." => ")
+	call reanimate#rename(to)
+" 	execute ":ReanimateSwitch" get(a:candidate, "action__point", "")
+" 	call reanimate#load(get(a:candidate, "action__point", ""))
+endfunction
+
+
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

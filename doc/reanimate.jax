@@ -160,6 +160,9 @@ unite-actions					*reanimate-unite-actions*
 	復元する前に現在の状態の保存を行い、その後、選択した名前で復元する。
 	それ以外は |:ReanimateSwitch| と同じです。
 
+- "reanimate_rename"
+	選択されている保存名の変更を行います。
+
 
 また、|unite-reanimate| はデフォルトアクションが設定されていません。
 上記のアクションを使用する場合は、|unite.vim| のアクションメニュー(Aキー)

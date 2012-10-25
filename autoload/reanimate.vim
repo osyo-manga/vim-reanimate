@@ -105,6 +105,40 @@ function! reanimate#last_point()
 endfunction
 
 
+function! s:rename(from, to)
+	if isdirectory(a:to)
+		let result = input("Overwrite ". a:to . " ? [yes/no] ")
+		if result !=# "yes"
+			return
+		endif
+	endif
+	try
+		let result= rename(a:from, a:to)
+		if result != 0
+			echoerr "Failed rename : " . a:from . " => " . a:to
+			return
+		endif
+	catch
+		echoerr v:exception
+	endtry
+	return 1
+endfunction
+
+
+function! reanimate#rename(to, ...)
+	let to = a:to
+	let from  = get(a:, 1, reanimate#last_point())
+	if empty(from) || empty(to)
+		echoerr "It is an invalid name."
+		return
+	endif
+	let result = s:rename(reanimate#point_to_path(from), reanimate#point_to_path(to))
+	if result && (from == reanimate#last_point())
+		let s:last_point = a:to
+	endif
+endfunction
+
+
 function! s:setup()
 	let s:last_point = ""
 	let s:events = s:make_events()
@@ -152,7 +186,6 @@ function! s:load_event_define()
 		call reanimate#hook(reanimate#events#{name}#define())
 	endfor
 endfunction
-
 
 
 function! s:context(point)
