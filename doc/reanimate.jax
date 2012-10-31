@@ -126,7 +126,7 @@ reanimate#load([{保存名}])			*reanimate#load()*
 
 
 ------------------------------------------------------------------------------
-|untie.vim|					*untie-reanimate*
+|unite.vim|					*unite-reanimate*
 
 Shougo 氏が作成された |unite.vim| を使用することで保存されているデータの一覧を出
 力し、復元する事が出来ます。
