@@ -170,9 +170,16 @@ function! s:empty_directory(expr)
 	return isdirectory(a:expr) ? empty(globpath(a:expr, "*")) : 1
 endfunction
 
-function! s:is_disable(event)
-	return type(a:event) == type({}) && has_key(a:event, "name") ? count(s:disables(), a:event.name)
-\		 : 0
+function! s:is_disable(event, point)
+	if !(type(a:event) == type({}) && has_key(a:event, "name"))
+		return 0
+	endif
+
+	let point = a:point
+	return (get(get(g:reanimate_event_disables, "_",   {}), a:event.name, 0)
+\		 || get(get(g:reanimate_event_disables, point, {}), a:event.name, 0)
+\		 || count(s:disables(), a:event.name))
+\		 && get(get(g:reanimate_event_disables, point, {}), a:event.name, 1)
 endfunction
 
 function! s:call_event(event, context)
@@ -215,7 +222,7 @@ function! s:make_events()
 	function! self.call(event, context)
 		let context = a:context
 		let context.event = a:event
-		let list = filter(copy(self.list), "has_key(v:val, a:event) && !s:is_disable(v:val)")
+		let list = filter(copy(self.list), "has_key(v:val, a:event) && !s:is_disable(v:val, context.point)")
 		if !empty(list)
 			call self.call(a:event."_pre", context)
 			for var in list

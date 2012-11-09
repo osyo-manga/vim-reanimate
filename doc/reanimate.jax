@@ -10,7 +10,7 @@
 インターフェース		|reanimate-interface|
   コマンド			  |reanimate-commands|
   関数				  |reanimate-functions|
-  |untie.vim|			  |untie-reanimate|
+  |unite.vim|			  |unite-reanimate|
 設定				|reanimate-setting|
   変数				  |reanimate-variables|
 保存・復元データ		|reanimate-save-data|
@@ -223,9 +223,34 @@ g:reanimate_sessionoptions			*g:reanimate_sessionoptions*
 	let g:reanimate_sessionoptions = "curdir,folds,help,slash,tabpages,winsize"
 <
 
+
+g:reanimate_event_disables			*g:reanimate_event_disables*
+	保存・復元を行わないデータを無効にする為の変数です。
+	保存データごとにも設定を行うことが出来ます。
+	各データの詳細は |reanimate-save-data| を参照して下さい。
+
+>
+    " 全てので保存時に "reanimate_message" を無効にし、
+    " test の場合のみ "reanimate_window" も無効にする
+    " _ に設定した場合は全ての保存時に適用される
+    let g:reanimate_event_disables = {
+    \	"_" : {
+    \		"reanimate_message" : 1,
+    \	},
+    \	"test" : {
+    \		"reanimate_window" : 1,
+    \	},
+    \}
+<
+
+
 g:reanimate_disables				*g:reanimate_disables*
+	Note: このオプションは非推奨です。
+	|reanimate_event_disables| を使用して下さい。
+
 	保存・復元を行わないデータを無効にする為の変数です。
 	各データの詳細は |reanimate-save-data| を参照して下さい。
+
 >
 	" Default
 	let g:reanimate_disables = []
