@@ -178,8 +178,9 @@ function! s:is_disable(event, point)
 	let _     = copy(get(g:reanimate_event_disables, "_", {}))
 	let point = copy(get(g:reanimate_event_disables, a:point, {}))
 	let disables = extend(_, point)
-	return len(filter(disables, string(a:event.name)." =~# v:key && v:val"))
-\		|| count(s:disables(), a:event.name)
+	return (len(filter(copy(disables), string(a:event.name)." =~# v:key && v:val"))
+\		|| count(s:disables(), a:event.name))
+\		&& get(disables, a:event.name, 1)
 endfunction
 
 function! s:test_is_disable()
@@ -188,10 +189,12 @@ function! s:test_is_disable()
 	\		"reanimate_message" : 1,
 	\		"hoge_message" : 0,
 	\		"foo.*" : 1,
+	\		"foo_homu" : 0,
 	\	},
 	\	"test" : {
 	\		"reanimate_window" : 1,
 	\		"reanimate_message" : 0,
+	\		"foo_mami" : 0,
 	\	},
 	\	"test2" : {
 	\		'reanimate_.*' : 1,
@@ -218,6 +221,9 @@ function! s:test_is_disable()
 
 	Assert  s:is_disable({"name" : "foo"}, "test2")
 	Assert  s:is_disable({"name" : "foohomu"}, "test")
+
+	Assert !s:is_disable({"name" : "foo_homu"}, "latest")
+	Assert !s:is_disable({"name" : "foo_mami"}, "test")
 endfunction
 
 function! s:call_event(event, context)
