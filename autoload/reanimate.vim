@@ -175,11 +175,49 @@ function! s:is_disable(event, point)
 		return 0
 	endif
 
-	let point = a:point
-	return (get(get(g:reanimate_event_disables, "_",   {}), a:event.name, 0)
-\		 || get(get(g:reanimate_event_disables, point, {}), a:event.name, 0)
-\		 || count(s:disables(), a:event.name))
-\		 && get(get(g:reanimate_event_disables, point, {}), a:event.name, 1)
+	let _     = copy(get(g:reanimate_event_disables, "_", {}))
+	let point = copy(get(g:reanimate_event_disables, a:point, {}))
+	let disables = extend(_, point)
+	return len(filter(disables, string(a:event.name)." =~# v:key && v:val"))
+\		|| count(s:disables(), a:event.name)
+endfunction
+
+function! s:test_is_disable()
+	let g:reanimate_event_disables = {
+	\	"_" : {
+	\		"reanimate_message" : 1,
+	\		"hoge_message" : 0,
+	\		"foo.*" : 1,
+	\	},
+	\	"test" : {
+	\		"reanimate_window" : 1,
+	\		"reanimate_message" : 0,
+	\	},
+	\	"test2" : {
+	\		'reanimate_.*' : 1,
+	\		"hoge.*" : 0,
+	\		"hoge_message" : 1,
+	\	},
+	\}
+
+	Assert  s:is_disable({"name" : "reanimate_message"}, "latest")
+	Assert !s:is_disable({"name" : "reanimate_message"}, "test")
+	Assert  s:is_disable({"name" : "reanimate_message"}, "test2")
+
+	Assert !s:is_disable({"name" : "reanimate_window"}, "latest")
+	Assert  s:is_disable({"name" : "reanimate_window"}, "test")
+	Assert  s:is_disable({"name" : "reanimate_window"}, "test2")
+
+	Assert !s:is_disable({"name" : "hoge_window"}, "latest")
+	Assert !s:is_disable({"name" : "hoge_window"}, "test")
+	Assert !s:is_disable({"name" : "hoge_window"}, "test2")
+
+	Assert !s:is_disable({"name" : "hoge_message"}, "latest")
+	Assert !s:is_disable({"name" : "hoge_message"}, "test")
+	Assert  s:is_disable({"name" : "hoge_message"}, "test2")
+
+	Assert  s:is_disable({"name" : "foo"}, "test2")
+	Assert  s:is_disable({"name" : "foohomu"}, "test")
 endfunction
 
 function! s:call_event(event, context)
