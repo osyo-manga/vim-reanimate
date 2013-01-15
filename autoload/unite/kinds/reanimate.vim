@@ -74,7 +74,9 @@ function! s:kind.action_table.delete.func(candidates)
 		call unite#mappings#do_action('vimfiler__delete', a:candidates, {
 \			'vimfiler__current_directory' : g:reanimate_save_dir,
 \			})
-		call unite#redraw(winnr())
+" 		call unite#redraw(winnr())
+	else
+		echo 'Canceled.'
 	endif
 endfunction
 
