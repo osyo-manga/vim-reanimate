@@ -67,6 +67,7 @@ let s:kind.action_table.delete = {
 \	"description" : "Reanimate Delete Save",
 \	"is_selectable" : 1,
 \	"is_quit" : 0,
+\	"is_invalidate_cache" : 1
 \}
 
 function! s:kind.action_table.delete.func(candidates)
@@ -74,7 +75,6 @@ function! s:kind.action_table.delete.func(candidates)
 		call unite#mappings#do_action('vimfiler__delete', a:candidates, {
 \			'vimfiler__current_directory' : g:reanimate_save_dir,
 \			})
-" 		call unite#redraw(winnr())
 	else
 		echo 'Canceled.'
 	endif
