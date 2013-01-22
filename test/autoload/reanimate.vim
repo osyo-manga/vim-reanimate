@@ -39,7 +39,7 @@ function! s:test_path_point()
 endfunction
 
 function! s:test_is_disable()
-
+	let tmp = g:reanimate_event_disables
 	let g:reanimate_event_disables = {
 	\	"_" : {
 	\		"reanimate_message" : 1,
@@ -107,8 +107,10 @@ function! s:test_is_disable()
 
 	OwlCheck  s:is_disable({"name" : "reanimate_gui"}, "test4/homu")
 	OwlCheck  s:is_disable({"name" : "reanimate_gui"}, "test4/mami")
-" 	OwlCheck !s:is_disable({"name" : "reanimate_window"}, "test4/homu")
-" 	OwlCheck !s:is_disable({"name" : "reanimate_window"}, "test4/mami")
+	OwlCheck !s:is_disable({"name" : "reanimate_window"}, "test4/homu")
+	OwlCheck !s:is_disable({"name" : "reanimate_window"}, "test4/mami")
+
+	let g:reanimate_event_disables = tmp
 endfunction
 
 

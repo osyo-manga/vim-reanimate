@@ -227,9 +227,13 @@ function! s:is_disable(event, point)
 	if !(type(a:event) == type({}) && has_key(a:event, "name"))
 		return 0
 	endif
-
-	let _     = copy(get(g:reanimate_event_disables, "_", {}))
-	let point = copy(get(g:reanimate_event_disables, a:point, {}))
+	let _ = copy(get(g:reanimate_event_disables, "_", {}))
+	let point = {}
+	for key in keys(copy(g:reanimate_event_disables))
+		if a:point =~# "^".key."$"
+			let point = g:reanimate_event_disables[key]
+		endif
+	endfor
 	let disables = extend(_, point)
 	return (len(filter(copy(disables), string(a:event.name)." =~# v:key && v:val"))
 \		|| count(s:disables(), a:event.name))
