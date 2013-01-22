@@ -183,66 +183,6 @@ function! s:is_disable(event, point)
 \		&& get(disables, a:event.name, 1)
 endfunction
 
-function! s:test_is_disable()
-	let g:reanimate_event_disables = {
-	\	"_" : {
-	\		"reanimate_message" : 1,
-	\		"hoge_message" : 0,
-	\		"foo.*" : 1,
-	\		"foo_homu" : 0,
-	\		'reanimate_.*': 1,
-	\		'reanimate_session': 0,
-	\		'reanimate_quickfix': 0,
-	\	},
-	\	"test" : {
-	\		"reanimate_window" : 1,
-	\		"reanimate_message" : 0,
-	\		"foo_mami" : 0,
-	\	},
-	\	"test2" : {
-	\		'reanimate_.*' : 1,
-	\		"hoge.*" : 0,
-	\		"hoge_message" : 1,
-	\	},
-	\	"test3" : {
-	\		'reanimate_session': 1,
-	\		'reanimate_quickfix': 1,
-	\		'reanimate_window': 0,
-	\		'reanimate_gui': 0,
-	\	},
-	\}
-
-	Assert  s:is_disable({"name" : "reanimate_message"}, "latest")
-	Assert !s:is_disable({"name" : "reanimate_message"}, "test")
-	Assert  s:is_disable({"name" : "reanimate_message"}, "test2")
-
-	Assert  s:is_disable({"name" : "reanimate_window"}, "latest")
-	Assert  s:is_disable({"name" : "reanimate_window"}, "test")
-	Assert  s:is_disable({"name" : "reanimate_window"}, "test2")
-
-	Assert !s:is_disable({"name" : "hoge_window"}, "latest")
-	Assert !s:is_disable({"name" : "hoge_window"}, "test")
-	Assert !s:is_disable({"name" : "hoge_window"}, "test2")
-
-	Assert !s:is_disable({"name" : "hoge_message"}, "latest")
-	Assert !s:is_disable({"name" : "hoge_message"}, "test")
-	Assert  s:is_disable({"name" : "hoge_message"}, "test2")
-
-	Assert  s:is_disable({"name" : "foo"}, "test2")
-	Assert  s:is_disable({"name" : "foohomu"}, "test")
-
-	Assert !s:is_disable({"name" : "foo_homu"}, "latest")
-	Assert !s:is_disable({"name" : "foo_mami"}, "test")
-
-	Assert  s:is_disable({"name" : "reanimate_hoge"}, "latest")
-	Assert !s:is_disable({"name" : "reanimate_session"}, "latest")
-	Assert !s:is_disable({"name" : "reanimate_quickfix"}, "latest")
-	Assert  s:is_disable({"name" : "reanimate_hoge"}, "test3")
-	Assert  s:is_disable({"name" : "reanimate_session"}, "test3")
-	Assert  s:is_disable({"name" : "reanimate_quickfix"}, "test3")
-	Assert !s:is_disable({"name" : "reanimate_window"}, "test3")
-	Assert !s:is_disable({"name" : "reanimate_gui"}, "test3")
-endfunction
 
 function! s:call_event(event, context)
 	call s:events.call(a:event, a:context)
