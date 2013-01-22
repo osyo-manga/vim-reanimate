@@ -53,8 +53,8 @@ function! s:source.gather_candidates(args, context)
 	else
 		return new_save + map(sort(map(reanimate#save_points_path(category), '{
 \			"time"  : reanimate#latest_time(reanimate#path_to_category_point(v:val)),
-\			"category_point" : reanimate#path_to_point(v:val),
-\			"point" : reanimate#path_to_category_point(v:val),
+\			"category_point" : reanimate#path_to_category_point(v:val),
+\			"point" : reanimate#path_to_point(v:val),
 \			"path"  : v:val,
 \		}'), "s:time_sorter"),
 \		'{

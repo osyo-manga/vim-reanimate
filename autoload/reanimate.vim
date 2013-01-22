@@ -52,7 +52,7 @@ function! reanimate#path_to_category(path)
 endfunction
 
 function! reanimate#latest_time(point)
-	return sort(map(split(globpath(reanimate#point_to_path(a:point), "*"), "\n"), "getftime(v:val)"))[-1]
+	return get(sort(map(split(globpath(reanimate#point_to_path(a:point), "*"), "\n"), "getftime(v:val)")), -1, "")
 endfunction
 
 
@@ -60,12 +60,15 @@ function! s:time_sorter(a, b)
 	return a:a.time < a:b.time ? 1 : -1
 endfunction
 
-function! reanimate#latest_save_point()
-	return (sort(map(reanimate#save_points(), '{
+
+function! reanimate#latest_save_point(...)
+	let category = get(a:, 1, "*")
+	return get(sort(map(reanimate#save_category_points(category), '{
 \		"time"  : reanimate#latest_time(v:val),
 \		"point" : v:val,
-\	}'), "s:time_sorter") + [{"point" : ""}])[0].point
+\	}'), "s:time_sorter"), 0, {"point" : ""}).point
 endfunction
+
 
 function! reanimate#categories()
 	return map(filter(split(globpath(s:save_dir(), "*"), "\n"), "!s:empty_directory(v:val)"), 'substitute(v:val, "\\", "\/", "g")')
@@ -73,17 +76,17 @@ endfunction
 
 
 function! reanimate#save_points_path(...)
-	let category = get(a:, "1", "*")
+	let category = get(a:, 1, "*")
 	return map(filter(split(globpath(s:save_dir(), category."/*"), "\n"), "!s:empty_directory(v:val.'/latest')"), 'substitute(v:val, "\\", "\/", "g")')
 endfunction
 
 function! reanimate#save_category_points(...)
-	let category = get(a:, "1", "*")
+	let category = get(a:, 1, "*")
 	return map(reanimate#save_points_path(category), "reanimate#path_to_category_point(v:val)")
 endfunction
 
 function! reanimate#save_points(...)
-	let category = get(a:, "1", "*")
+	let category = get(a:, 1, "*")
 	return map(reanimate#save_points_path(category), "reanimate#path_to_point(v:val)")
 endfunction
 
