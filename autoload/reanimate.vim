@@ -61,13 +61,20 @@ function! s:time_sorter(a, b)
 endfunction
 
 
-function! reanimate#latest_save_point(...)
+function! reanimate#latest_save_category_point(...)
 	let category = get(a:, 1, "*")
 	return get(sort(map(reanimate#save_category_points(category), '{
 \		"time"  : reanimate#latest_time(v:val),
 \		"point" : v:val,
 \	}'), "s:time_sorter"), 0, {"point" : ""}).point
 endfunction
+
+
+function! reanimate#latest_save_point(...)
+	let category = get(a:, 1, "*")
+	return reanimate#path_to_point(reanimate#latest_save_category_point(category))
+endfunction
+
 
 
 function! reanimate#categories()
@@ -214,6 +221,7 @@ endfunction
 function! s:empty_directory(expr)
 	return isdirectory(a:expr) ? empty(globpath(a:expr, "*")) : 1
 endfunction
+
 
 function! s:is_disable(event, point)
 	if !(type(a:event) == type({}) && has_key(a:event, "name"))

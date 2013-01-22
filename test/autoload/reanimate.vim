@@ -66,6 +66,12 @@ function! s:test_is_disable()
 	\		'reanimate_window': 0,
 	\		'reanimate_gui': 0,
 	\	},
+	\	"test4/.*" : {
+	\		'reanimate_session': 1,
+	\		'reanimate_quickfix': 1,
+	\		'reanimate_window': 0,
+	\		'reanimate_gui': 1,
+	\	},
 	\}
 
 	OwlCheck  s:is_disable({"name" : "reanimate_message"}, "latest")
@@ -98,6 +104,11 @@ function! s:test_is_disable()
 	OwlCheck  s:is_disable({"name" : "reanimate_quickfix"}, "test3")
 	OwlCheck !s:is_disable({"name" : "reanimate_window"}, "test3")
 	OwlCheck !s:is_disable({"name" : "reanimate_gui"}, "test3")
+
+	OwlCheck  s:is_disable({"name" : "reanimate_gui"}, "test4/homu")
+	OwlCheck  s:is_disable({"name" : "reanimate_gui"}, "test4/mami")
+" 	OwlCheck !s:is_disable({"name" : "reanimate_window"}, "test4/homu")
+" 	OwlCheck !s:is_disable({"name" : "reanimate_window"}, "test4/mami")
 endfunction
 
 
