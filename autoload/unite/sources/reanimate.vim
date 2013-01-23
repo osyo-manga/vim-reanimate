@@ -36,18 +36,36 @@ function! s:source.gather_candidates(args, context)
 \	}]
 \ : []
 
-	return new_save + map(sort(map(reanimate#save_points_path(), '{
-\		"time"  : reanimate#latest_time(reanimate#path_to_point(v:val)),
-\		"point" : reanimate#path_to_point(v:val),
-\		"path"  : v:val,
-\	}'), "s:time_sorter"),
-\	'{
-\		"word" : s:time_to_string(v:val.time)."  [ ".v:val.point." ]",
-\		"kind" : "reanimate",
-\		"action__point" : v:val.point,
-\		"action__path"  : v:val.path,
-\		"action__directory" : v:val.path
-\}')
+	let category = get(a:args, 0, "")
+	if empty(category)
+		return new_save + map(sort(map(reanimate#save_points_path(), '{
+\			"time"  : reanimate#latest_time(reanimate#path_to_category_point(v:val)),
+\			"point" : reanimate#path_to_category_point(v:val),
+\			"path"  : v:val,
+\		}'), "s:time_sorter"),
+\		'{
+\			"word" : s:time_to_string(v:val.time)."  [ ".v:val.point." ]",
+\			"kind" : "reanimate",
+\			"action__point" : v:val.point,
+\			"action__path"  : v:val.path,
+\			"action__directory" : v:val.path
+\		}')
+	else
+		return new_save + map(sort(map(reanimate#save_points_path(category), '{
+\			"time"  : reanimate#latest_time(reanimate#path_to_category_point(v:val)),
+\			"category_point" : reanimate#path_to_category_point(v:val),
+\			"point" : reanimate#path_to_point(v:val),
+\			"path"  : v:val,
+\		}'), "s:time_sorter"),
+\		'{
+\			"word" : s:time_to_string(v:val.time)."  [ ".v:val.point." ]",
+\			"kind" : "reanimate",
+\			"action__point" : v:val.category_point,
+\			"action__path"  : v:val.path,
+\			"action__directory" : v:val.path
+\		}')
+
+	endif
 endfunction
 
 function! s:source.hooks.on_syntax(args, context)

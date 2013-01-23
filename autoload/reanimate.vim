@@ -16,16 +16,43 @@ function! reanimate#hook(event, ...)
 " 	call call(s:events.add, [a:event] + a:000, s:events)
 endfunction
 
+
+function! s:has_category(point)
+	let index = match(a:point, "/")
+	return index != -1 && index != (len(a:point)-1) && index != 0
+endfunction
+
+function! s:get_category(point)
+	return s:has_category(a:point)
+\		 ? matchstr(a:point, '\zs.*\ze/.*')
+\		 : g:reanimate_default_category
+endfunction
+
+
+function! s:point_to_category_point(point)
+	return s:has_category(a:point)
+\		 ? a:point
+\		 : g:reanimate_default_category . "/" . substitute(a:point, '/', '', 'g')
+endfunction
+
 function! reanimate#point_to_path(point)
-	return s:save_dir()."/".(a:point)
+	return s:save_dir()."/".s:point_to_category_point(a:point)
 endfunction
 
 function! reanimate#path_to_point(path)
 	return fnamemodify(a:path, ":t:r")
 endfunction
 
+function! reanimate#path_to_category_point(path)
+	return fnamemodify(a:path, ":h:t:r")."/".fnamemodify(a:path, ":t:r")
+endfunction
+
+function! reanimate#path_to_category(path)
+	return fnamemodify(a:path, ":h:t:r")
+endfunction
+
 function! reanimate#latest_time(point)
-	return sort(map(split(globpath(reanimate#point_to_path(a:point), "*"), "\n"), "getftime(v:val)"))[-1]
+	return get(sort(map(split(globpath(reanimate#point_to_path(a:point), "*"), "\n"), "getftime(v:val)")), -1, "")
 endfunction
 
 
@@ -33,24 +60,47 @@ function! s:time_sorter(a, b)
 	return a:a.time < a:b.time ? 1 : -1
 endfunction
 
-function! reanimate#latest_save_point()
-	return (sort(map(reanimate#save_points(), '{
+
+function! reanimate#latest_save_category_point(...)
+	let category = get(a:, 1, "*")
+	return get(sort(map(reanimate#save_category_points(category), '{
 \		"time"  : reanimate#latest_time(v:val),
 \		"point" : v:val,
-\	}'), "s:time_sorter") + [{"point" : ""}])[0].point
+\	}'), "s:time_sorter"), 0, {"point" : ""}).point
 endfunction
 
-function! reanimate#save_points_path()
-	return map(filter(split(globpath(s:save_dir(), "*"), "\n"), "!s:empty_directory(v:val.'/latest')"), 'substitute(v:val, "\\", "\/", "g")')
+
+function! reanimate#latest_save_point(...)
+	let category = get(a:, 1, "*")
+	return reanimate#path_to_point(reanimate#latest_save_category_point(category))
 endfunction
 
-function! reanimate#save_points()
-	return map(reanimate#save_points_path(), "reanimate#path_to_point(v:val)")
+
+
+function! reanimate#categories()
+	return map(filter(split(globpath(s:save_dir(), "*"), "\n"), "!s:empty_directory(v:val)"), 'substitute(v:val, "\\", "\/", "g")')
+endfunction
+
+
+function! reanimate#save_points_path(...)
+	let category = get(a:, 1, "*")
+	return map(filter(split(globpath(s:save_dir(), category."/*"), "\n"), "!s:empty_directory(v:val.'/latest')"), 'substitute(v:val, "\\", "\/", "g")')
+endfunction
+
+function! reanimate#save_category_points(...)
+	let category = get(a:, 1, "*")
+	return map(reanimate#save_points_path(category), "reanimate#path_to_category_point(v:val)")
+endfunction
+
+function! reanimate#save_points(...)
+	let category = get(a:, 1, "*")
+	return map(reanimate#save_points_path(category), "reanimate#path_to_point(v:val)")
 endfunction
 
 
 function! reanimate#save(...)
 	let new_point = a:0 && !empty(a:1) ? a:1 : s:last_point()
+	let new_point = s:point_to_category_point(new_point)
 
 	" 保存名がないなら何もしないで終了
 	if empty(new_point)
@@ -72,8 +122,10 @@ function! reanimate#save(...)
 	endif
 endfunction
 
+
 function! reanimate#load(...)
 	let new_point = a:0 && !empty(a:1) ? a:1 : s:last_point()
+	let new_point = s:point_to_category_point(new_point)
 	let context = s:context(new_point)
 	
 	" 違うポイントをロードする場合
@@ -170,15 +222,20 @@ function! s:empty_directory(expr)
 	return isdirectory(a:expr) ? empty(globpath(a:expr, "*")) : 1
 endfunction
 
+
 function! s:is_disable(event, point)
 	if !(type(a:event) == type({}) && has_key(a:event, "name"))
 		return 0
 	endif
-
-	let _     = copy(get(g:reanimate_event_disables, "_", {}))
-	let point = copy(get(g:reanimate_event_disables, a:point, {}))
+	let _ = copy(get(g:reanimate_event_disables, "_", {}))
+	let point = {}
+	for key in keys(copy(g:reanimate_event_disables))
+		if a:point =~# "^".key."$"
+			let point = g:reanimate_event_disables[key]
+		endif
+	endfor
 	let disables = extend(_, point)
-	return (len(filter(copy(disables), string(a:event.name)." =~# v:key && v:val"))
+	return (len(filter(copy(disables), string(a:event.name)." =~# '^'.v:key.'$' && v:val"))
 \		|| count(s:disables(), a:event.name))
 \		&& get(disables, a:event.name, 1)
 endfunction

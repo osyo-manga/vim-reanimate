@@ -59,6 +59,9 @@ vimrc_local			|reanimate-vimrc_local|
 
 	" reanimate という名前で復元を行う
 	:ReanimateLoad reanimate
+
+	" categoryA という風にカテゴリ別に保存する事も出来る
+	:ReanimateLoad categoryA/reanimate
 <
 
 保存されているデータの一覧は unite.vim を使用して出力する事が出来ます。
@@ -71,15 +74,35 @@ vimrc_local			|reanimate-vimrc_local|
 ------------------------------------------------------------------------------
 コマンド					*reanimate-commands*
 
-:ReanimateSave [{名前}]				*:ReanimateSave*
+:ReanimateSave [[{カテゴリ名}/]{名前}]		*:ReanimateSave*
 	現在の状態を名前を付けて保存します。
 	|:ReanimateLoad| で保存した状態の復元を行います。
 	引数がない場合は |g:reanimate_default_save_name| の値が使用されます。
 
-:ReanimateLoad [{名前}]				*:ReanimateLoad*
+	また、
+>
+	:ReanimateSave category/save_name
+<
+	のようにカテゴリを指定して保存する事が出来ます。
+	カテゴリが指定されなければ |g:reanimate_default_category| に設定されて
+	いるカテゴリ名が指定されます。
+	コマンドラインの補完は |g:reanimate_default_category| に保存されている
+	名前が補完されるので注意して下さい。
+
+:ReanimateLoad [[{カテゴリ名}/]{名前}]				*:ReanimateLoad*
 	保存した状態の復元を行います。
 	|:ReanimateSave| で状態の保存を行います。
 	引数がない場合は |g:reanimate_default_save_name| の値が使用されます。
+
+	また、
+>
+	:ReanimateLoad category/save_name
+<
+	のようにカテゴリを指定して復元する事が出来ます。
+	カテゴリが指定されなければ |g:reanimate_default_category| に設定されて
+	いるカテゴリ名が指定されます。
+	コマンドラインの補完は |g:reanimate_default_category| に保存されている
+	名前が補完されるので注意して下さい。
 
 :ReanimateSaveInput				*:ReanimateSaveInput*
 	コマンドの呼び出し時に名前の入力を行なって保存します。
@@ -136,7 +159,7 @@ unite.vim - github : https://github.com/Shougo/unite.vim
 image : http://f.hatena.ne.jp/osyo-manga/20120214213757
 
 >
-	:Unite reanimate
+	:Unite reanimate:{category}
 <
 
 
@@ -177,6 +200,15 @@ unite-actions					*reanimate-unite-actions*
 	" デフォルトで復元する
 	:Unite reanimate -default-action=reanimate_save
 <
+
+引数にカテゴリ名を渡すことでそのカテゴリの一覧で絞り込んで出力することが出来ま
+す。
+
+>
+	" categoryA の一覧を出力する
+	:Unite reanimate:categoryA
+<
+
 
 
 ==============================================================================
@@ -231,17 +263,21 @@ g:reanimate_event_disables			*g:reanimate_event_disables*
 
 >
     " 全てので保存時に "reanimate_message" を無効にし、
-    " test の場合のみ "reanimate_window" も無効にする
+    " categoryA/test の場合のみ "reanimate_window" も無効にする
     " _ に設定した場合は全ての保存時に適用される
+    " また正規表現を使用して categoryB の時に～という風に設定もできる
     let g:reanimate_event_disables = {
     \	"_" : {
     \		"reanimate_message" : 1,
     \	},
-    \	"test" : {
+    \	"categoryA/test" : {
     \		"reanimate_window" : 1,
     \	},
-    \	"test2" : {
+    \	"categoryA/test2" : {
     \		"reanimate_.*" : 1,
+    \	},
+    \	"categoryB/.*" : {
+    \		"reanimate_window" : 0,
     \	},
     \}
 <
@@ -261,6 +297,19 @@ g:reanimate_disables				*g:reanimate_disables*
 	" Example
 	" session と window の保存・復元が行われません
 	let g:reanimate_disables = ["reanimate_session", "reanimate_window"]
+<
+
+
+g:reanimate_default_category			*g:reanimate_default_category*
+	保存・復元時にカテゴリが指定されなかった場合に使用されるカテゴリ名で
+	す。
+>
+	" Default
+	let g:reanimate_default_category = "default_category"
+	
+	" Example
+	" default_category/homu で保存される
+	:ReanimateSave homu
 <
 
 

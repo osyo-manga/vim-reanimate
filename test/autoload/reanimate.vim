@@ -10,24 +10,36 @@ endfunction
 
 function! s:test_path_point()
 	let tmp = g:reanimate_save_dir
+	let tmp2 = g:reanimate_default_category
 
 	let g:reanimate_save_dir = "D:/save_point"
+	let g:reanimate_default_category = "category"
+
 	let path = reanimate#point_to_path("test")
-	OwlCheck path == "D:/save_point/test"
+	OwlCheck path == "D:/save_point/category/test"
+
+	let path = reanimate#point_to_path("homu/test")
+	OwlCheck path == "D:/save_point/homu/test"
 
 	let g:reanimate_save_dir = 'D:\save_point'
 	let path = reanimate#point_to_path("test")
-	OwlCheck path == "D:/save_point/test"
+	OwlCheck path == "D:/save_point/category/test"
 
-	let point = reanimate#path_to_point("D:/save_point/test")
+	let point = reanimate#path_to_point("D:/save_point/category/test")
 	OwlCheck point == "test"
 
+	let point = reanimate#path_to_category_point("D:/save_point/category/test")
+	OwlCheck point == "category/test"
 
+	let point = reanimate#path_to_category("D:/save_point/category/test")
+	OwlCheck point == "category"
+
+	let g:reanimate_default_category = tmp2
 	let g:reanimate_save_dir = tmp
 endfunction
 
 function! s:test_is_disable()
-
+	let tmp = g:reanimate_event_disables
 	let g:reanimate_event_disables = {
 	\	"_" : {
 	\		"reanimate_message" : 1,
@@ -53,6 +65,12 @@ function! s:test_is_disable()
 	\		'reanimate_quickfix': 1,
 	\		'reanimate_window': 0,
 	\		'reanimate_gui': 0,
+	\	},
+	\	"test4/.*" : {
+	\		'reanimate_session': 1,
+	\		'reanimate_quickfix': 1,
+	\		'reanimate_window': 0,
+	\		'reanimate_gui': 1,
 	\	},
 	\}
 
@@ -86,7 +104,53 @@ function! s:test_is_disable()
 	OwlCheck  s:is_disable({"name" : "reanimate_quickfix"}, "test3")
 	OwlCheck !s:is_disable({"name" : "reanimate_window"}, "test3")
 	OwlCheck !s:is_disable({"name" : "reanimate_gui"}, "test3")
+
+	OwlCheck  s:is_disable({"name" : "reanimate_gui"}, "test4/homu")
+	OwlCheck  s:is_disable({"name" : "reanimate_gui"}, "test4/mami")
+	OwlCheck !s:is_disable({"name" : "reanimate_window"}, "test4/homu")
+	OwlCheck !s:is_disable({"name" : "reanimate_window"}, "test4/mami")
+
+	let g:reanimate_event_disables = tmp
 endfunction
+
+
+function! s:test_has_category()
+	OwlCheck !s:has_category("hoge")
+	OwlCheck !s:has_category("hoge/")
+	OwlCheck  s:has_category("mami/mami")
+	OwlCheck !s:has_category("/mami")
+endfunction
+
+
+function! s:test_get_category()
+	let tmp = g:reanimate_default_category
+
+	let g:reanimate_default_category = "default"
+	OwlCheck s:get_category("hoge") == "default"
+	OwlCheck s:get_category("hoge/") == "default"
+	OwlCheck s:get_category("mami/mado") == "mami"
+	OwlCheck s:get_category("/mami") == "default"
+
+	let g:reanimate_default_category = tmp
+endfunction
+
+
+function! s:test_point_to_category_point()
+	let tmp = g:reanimate_default_category
+	let tmp2 = g:reanimate_save_dir
+
+	let g:reanimate_default_category = "default"
+	let g:reanimate_save_dir = "D:/"
+	OwlCheck s:point_to_category_point("hoge") == "default/hoge"
+	OwlCheck s:point_to_category_point("/hoge") == "default/hoge"
+	OwlCheck s:point_to_category_point("hoge/") == "default/hoge"
+	OwlCheck s:point_to_category_point("mami/mado") == "mami/mado"
+	OwlCheck s:point_to_category_point("mami/mado") == "mami/mado"
+
+	let g:reanimate_default_category = tmp
+	let g:reanimate_save_dir = tmp2
+endfunction
+
 
 
 

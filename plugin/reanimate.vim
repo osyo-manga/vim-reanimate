@@ -13,6 +13,7 @@ let g:reanimate_default_save_name = get(g:, "reanimate_default_save_name", "late
 let g:reanimate_sessionoptions    = get(g:, "reanimate_sessionoptions", &sessionoptions)
 let g:reanimate_event_disables    = get(g:, "reanimate_event_disables", {})
 let g:reanimate_disables          = get(g:, "reanimate_disables", [])
+let g:reanimate_default_category  = get(g:, "reanimate_default_category", "default_category")
 
 
 function! s:save_point_completelist(arglead, ...)
