@@ -12,7 +12,7 @@ let s:event = {
 \}
 
 
-function! s:event.load(context)
+function! s:event.load_post(context)
 	let dir = a:context.path
 	if filereadable(dir."/quickfix.vim")
 		source `=dir."/quickfix.vim"`
