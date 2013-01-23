@@ -263,17 +263,21 @@ g:reanimate_event_disables			*g:reanimate_event_disables*
 
 >
     " 全てので保存時に "reanimate_message" を無効にし、
-    " test の場合のみ "reanimate_window" も無効にする
+    " categoryA/test の場合のみ "reanimate_window" も無効にする
     " _ に設定した場合は全ての保存時に適用される
+    " また正規表現を使用して categoryB の時に～という風に設定もできる
     let g:reanimate_event_disables = {
     \	"_" : {
     \		"reanimate_message" : 1,
     \	},
-    \	"test" : {
+    \	"categoryA/test" : {
     \		"reanimate_window" : 1,
     \	},
-    \	"test2" : {
+    \	"categoryA/test2" : {
     \		"reanimate_.*" : 1,
+    \	},
+    \	"categoryB/.*" : {
+    \		"reanimate_window" : 0,
     \	},
     \}
 <

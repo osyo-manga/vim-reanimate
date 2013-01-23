@@ -235,7 +235,7 @@ function! s:is_disable(event, point)
 		endif
 	endfor
 	let disables = extend(_, point)
-	return (len(filter(copy(disables), string(a:event.name)." =~# v:key && v:val"))
+	return (len(filter(copy(disables), string(a:event.name)." =~# '^'.v:key.'$' && v:val"))
 \		|| count(s:disables(), a:event.name))
 \		&& get(disables, a:event.name, 1)
 endfunction
