@@ -147,6 +147,41 @@ reanimate#load([{保存名}])			*reanimate#load()*
 	|:ReanimateLoad| の関数版です。
 	引数がない場合は |g:reanimate_default_save_name| の値が使用されます。
 
+reanimate#categories()				*reanimate#categories()*
+	保存されている全てのカテゴリのパスをリストで返します。
+
+reanimate#latest_save_category_point([{category}])
+						*reanimate#latest_save_category_point()*
+	{category} で最後に保存された保存名を返します。
+	|reanimate#latest_save_point()| とは違いカテゴリ名が付属します。
+	引数がなければ全てのカテゴリの中から最後に保存された保存名が返りま
+	す。
+	Example: >
+		" カテゴリ session で最後に保存された保存名が返ってくる
+		echo reanimate#latest_save_category_point()
+		" => "session/hoge"
+
+		" 全てのカテゴリの中から最後に保存された保存名が返ってくる
+		echo reanimate#latest_save_category_point()
+		" => "default_category/reanimate"
+	<
+
+reanimate#latest_save_point([{category}])	*reanimate#latest_save_point()*
+	{category} で最後に保存された保存名を返します。
+	|reanimate#latest_save_category_point()| とは違いカテゴリ名が付属しませ
+	ん。
+	引数がなければ全てのカテゴリの中から最後に保存された保存名が返りま
+	す。
+	Example: >
+		" カテゴリ session で最後に保存された保存が返ってくる
+		echo reanimate#latest_save_category_point()
+		" => "hoge"
+
+		" 全てのカテゴリの中から最後に保存された保存が返ってくる
+		echo reanimate#latest_save_category_point()
+		" => "reanimate"
+	<
+
 
 ------------------------------------------------------------------------------
 |unite.vim|					*unite-reanimate*
