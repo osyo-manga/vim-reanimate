@@ -158,7 +158,7 @@ reanimate#latest_save_category_point([{category}])
 	す。
 	Example: >
 		" カテゴリ session で最後に保存された保存名が返ってくる
-		echo reanimate#latest_save_category_point()
+		echo reanimate#latest_save_category_point("session")
 		" => "session/hoge"
 
 		" 全てのカテゴリの中から最後に保存された保存名が返ってくる
@@ -174,7 +174,7 @@ reanimate#latest_save_point([{category}])	*reanimate#latest_save_point()*
 	す。
 	Example: >
 		" カテゴリ session で最後に保存された保存が返ってくる
-		echo reanimate#latest_save_category_point()
+		echo reanimate#latest_save_category_point("session")
 		" => "hoge"
 
 		" 全てのカテゴリの中から最後に保存された保存が返ってくる
