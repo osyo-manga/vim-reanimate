@@ -182,6 +182,12 @@ reanimate#latest_save_point([{category}])	*reanimate#latest_save_point()*
 		" => "reanimate"
 	<
 
+reanimate#is_saved()				*reanimate#is_saved()*
+	保存・復元後は 1 が返ってきます。
+	それ以外は 0 が返ってきます。
+
+reanimate#last_point()				*reanimate#last_point()*
+	現在の保存名を返します。
 
 ------------------------------------------------------------------------------
 |unite.vim|					*unite-reanimate*
