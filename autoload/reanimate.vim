@@ -40,7 +40,7 @@ function! reanimate#point_to_path(point)
 endfunction
 
 function! reanimate#path_to_point(path)
-	return namemodify(a:path, ":t")
+	return fnamemodify(a:path, ":t")
 endfunction
 
 function! reanimate#path_to_category_point(path)
