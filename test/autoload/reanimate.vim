@@ -21,18 +21,33 @@ function! s:test_path_point()
 	let path = reanimate#point_to_path("homu/test")
 	OwlCheck path == "D:/save_point/homu/test"
 
+	let path = reanimate#point_to_path("homu/test.vim")
+	OwlCheck path == "D:/save_point/homu/test.vim"
+
 	let g:reanimate_save_dir = 'D:\save_point'
 	let path = reanimate#point_to_path("test")
 	OwlCheck path == "D:/save_point/category/test"
 
+	let path = reanimate#point_to_path("test.vim")
+	OwlCheck path == "D:/save_point/category/test.vim"
+
 	let point = reanimate#path_to_point("D:/save_point/category/test")
 	OwlCheck point == "test"
+
+	let point = reanimate#path_to_point("D:/save_point/category/test.vim")
+	OwlCheck point == "test.vim"
 
 	let point = reanimate#path_to_category_point("D:/save_point/category/test")
 	OwlCheck point == "category/test"
 
+	let point = reanimate#path_to_category_point("D:/save_point/category.vim/test")
+	OwlCheck point == "category.vim/test"
+
 	let point = reanimate#path_to_category("D:/save_point/category/test")
 	OwlCheck point == "category"
+
+	let point = reanimate#path_to_category("D:/save_point/category.vim/test")
+	OwlCheck point == "category.vim"
 
 	let g:reanimate_default_category = tmp2
 	let g:reanimate_save_dir = tmp

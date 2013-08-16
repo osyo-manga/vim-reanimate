@@ -40,15 +40,15 @@ function! reanimate#point_to_path(point)
 endfunction
 
 function! reanimate#path_to_point(path)
-	return fnamemodify(a:path, ":t:r")
+	return namemodify(a:path, ":t")
 endfunction
 
 function! reanimate#path_to_category_point(path)
-	return fnamemodify(a:path, ":h:t:r")."/".fnamemodify(a:path, ":t:r")
+	return fnamemodify(a:path, ":h:t")."/".fnamemodify(a:path, ":t")
 endfunction
 
 function! reanimate#path_to_category(path)
-	return fnamemodify(a:path, ":h:t:r")
+	return fnamemodify(a:path, ":h:t")
 endfunction
 
 function! reanimate#latest_time(point)
@@ -74,7 +74,6 @@ function! reanimate#latest_save_point(...)
 	let category = get(a:, 1, "*")
 	return reanimate#path_to_point(reanimate#latest_save_category_point(category))
 endfunction
-
 
 
 function! reanimate#categories()
