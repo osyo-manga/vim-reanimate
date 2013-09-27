@@ -3,6 +3,7 @@ set cpo&vim
 scriptencoding utf-8
 
 
+let s:last_point_category = {}
 
 " reanimate#hook(event)
 " or
@@ -115,6 +116,7 @@ function! reanimate#save(...)
 	endif
 	call s:save(context)
 	let s:last_point = new_point
+	let s:last_point_category[s:get_category(new_point)] = matchstr(new_point, '.*/\zs.*')
 
 	if is_another_point
 		call s:call_event("save_enter",context)
@@ -135,6 +137,7 @@ function! reanimate#load(...)
 
 	call s:load(context)
 	let s:last_point = new_point
+	let s:last_point_category[s:get_category(new_point)] = matchstr(new_point, '.*/\zs.*')
 
 	if is_another_point
 		call s:call_event("load_enter",context)
@@ -151,9 +154,10 @@ function! reanimate#is_saved()
 	return s:is_saved()
 endfunction
 
-function! reanimate#last_point()
-	return s:last_point
+function! reanimate#last_point(...)
+	return a:0 ? get(s:last_point_category, a:1, "") : s:last_point
 endfunction
+
 
 
 function! s:rename(from, to)

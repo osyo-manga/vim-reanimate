@@ -186,8 +186,11 @@ reanimate#is_saved()				*reanimate#is_saved()*
 	保存・復元後は 1 が返ってきます。
 	それ以外は 0 が返ってきます。
 
-reanimate#last_point()				*reanimate#last_point()*
+reanimate#last_point([{category}])		*reanimate#last_point()*
 	現在の保存名を返します。
+	{category} を渡した場合はそのカテゴリが最後に読み込んだ名前を返しま
+	す。
+
 
 ------------------------------------------------------------------------------
 |unite.vim|					*unite-reanimate*
