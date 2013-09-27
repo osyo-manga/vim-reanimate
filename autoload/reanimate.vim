@@ -3,7 +3,6 @@ set cpo&vim
 scriptencoding utf-8
 
 
-let s:last_point_category = {}
 
 " reanimate#hook(event)
 " or
@@ -150,8 +149,8 @@ function! reanimate#unload()
 endfunction
 
 
-function! reanimate#is_saved()
-	return s:is_saved()
+function! reanimate#is_saved(...)
+	return a:0 ? has_key(s:last_point_category, a:1) : s:is_saved()
 endfunction
 
 function! reanimate#last_point(...)
@@ -196,6 +195,7 @@ endfunction
 
 function! s:setup()
 	let s:last_point = ""
+	let s:last_point_category = {}
 	let s:events = s:make_events()
 	call s:load_event_define()
 endfunction

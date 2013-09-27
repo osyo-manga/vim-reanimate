@@ -182,9 +182,10 @@ reanimate#latest_save_point([{category}])	*reanimate#latest_save_point()*
 		" => "reanimate"
 	<
 
-reanimate#is_saved()				*reanimate#is_saved()*
+reanimate#is_saved([{category}])				*reanimate#is_saved()*
 	保存・復元後は 1 が返ってきます。
 	それ以外は 0 が返ってきます。
+	{category} を渡した場合はそのカテゴリで判定を行います。
 
 reanimate#last_point([{category}])		*reanimate#last_point()*
 	現在の保存名を返します。
