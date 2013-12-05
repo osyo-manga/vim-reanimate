@@ -302,29 +302,28 @@ g:reanimate_sessionoptions			*g:reanimate_sessionoptions*
 
 
 g:reanimate_event_disables			*g:reanimate_event_disables*
-	保存・復元を行わないデータを無効にする為の変数です。
-	保存データごとにも設定を行うことが出来ます。
-	各データの詳細は |reanimate-save-data| を参照して下さい。
-
+	各イベントを無効にする設定を記述します。
+	イベントについては |reanimate-event| を参照して下さい。
+	特定の保存・復元の処理を無効にする事もできます。
 >
-    " 全てので保存時に "reanimate_message" を無効にし、
-    " categoryA/test の場合のみ "reanimate_window" も無効にする
-    " _ に設定した場合は全ての保存時に適用される
-    " また正規表現を使用して categoryB の時に～という風に設定もできる
-    let g:reanimate_event_disables = {
-    \	"_" : {
-    \		"reanimate_message" : 1,
-    \	},
-    \	"categoryA/test" : {
-    \		"reanimate_window" : 1,
-    \	},
-    \	"categoryA/test2" : {
-    \		"reanimate_.*" : 1,
-    \	},
-    \	"categoryB/.*" : {
-    \		"reanimate_window" : 0,
-    \	},
-    \}
+	" 全てので保存時に "reanimate_confirm" を無効にし、
+	" categoryA/test の場合のみ "reanimate_window" も無効にする
+	" _ に設定した場合は全ての保存時に適用される
+	" また正規表現を使用して categoryB の時に～という風に設定もできる
+	let g:reanimate_event_disables = {
+	\	"_" : {
+	\		"reanimate_confirm" : 1,
+	\	},
+	\	"categoryA/test" : {
+	\		"reanimate_window" : 1,
+	\	},
+	\	"categoryA/test2" : {
+	\		"reanimate_.*" : 1,
+	\	},
+	\	"categoryB/.*" : {
+	\		"reanimate_window" : 0,
+	\	},
+	\}
 <
 
 
@@ -334,7 +333,6 @@ g:reanimate_disables				*g:reanimate_disables*
 
 	保存・復元を行わないデータを無効にする為の変数です。
 	各データの詳細は |reanimate-save-data| を参照して下さい。
-
 >
 	" Default
 	let g:reanimate_disables = []
@@ -343,7 +341,6 @@ g:reanimate_disables				*g:reanimate_disables*
 	" session と window の保存・復元が行われません
 	let g:reanimate_disables = ["reanimate_session", "reanimate_window"]
 <
-
 
 g:reanimate_default_category			*g:reanimate_default_category*
 	保存・復元時にカテゴリが指定されなかった場合に使用されるカテゴリ名で
@@ -359,10 +356,20 @@ g:reanimate_default_category			*g:reanimate_default_category*
 
 
 ==============================================================================
-保存・復元データ				*reanimate-save-data*
+vimrc_local					*reanimate-vimrc_local*
 
-保存・復元が行われるデータです。
-このデータは |g:reanimate_disables| に設定することで無効することが出来ます。
+各データのディレクトリの直下に vimrc_local.vim ファイルを作成する
+ことで、保存データを復元する際に vimrc_local.vim が読み込まれます。
+各データごとに固有の設定を行いたい場合にはこれを使用して下さい。
+vimrc_local.vim の編集は |:ReanimateEditVimrcLocal| で行えます。
+
+
+==============================================================================
+イベント					*reanimate-events*
+
+|reanimate.vim| で制御しているイベントです。
+保存・復元もこのイベントで行っています。
+この処理は |g:reanimate_event_disables| に設定することで無効することが出来ます。
 
 
 - "session"					*reanimate-session*
@@ -374,7 +381,6 @@ Disable: >
 	reanimate_session
 <
 
-
 - "viminfo"					*reanimate-viminfo*
 
 |viminfo| のデータを保存し、復元を行います。
@@ -382,7 +388,6 @@ Disable: >
 Disable: >
 	reanimate_viminfo
 <
-
 
 - "window"					*reanimate-window*
 
@@ -393,7 +398,6 @@ Disable: >
 	reanimate_window
 <
 
-
 - "quickfix"					*reanimate-quickfix*
 
 quickfix のデータを保存し、復元を行います。
@@ -402,18 +406,24 @@ Disable: >
 	reanimate_quickfix
 <
 
+- "confirm"					*reanimate-confirm*
 
-==============================================================================
-vimrc_local					*reanimate-vimrc_local*
+別の名前で保存する場合や復元を行う場合に確認メッセージの出力を行います。
 
-各データのディレクトリの直下に vimrc_local.vim ファイルを作成する
-ことで、保存データを復元する際に vimrc_local.vim が読み込まれます。
-各データごとに固有の設定を行いたい場合にはこれを使用して下さい。
-vimrc_local.vim の編集は |:ReanimateEditVimrcLocal| で行えます。
+Disable: >
+	reanimate_confirm
+<
 
+- "error"					*reanimate-error*
 
-==============================================================================
-イベントのフック				*reanimate-events*
+保存・復元時にエラーが発生した場合にそのエラー内容の出力を行います。
+
+Disable: >
+	reanimate_error
+<
+
+------------------------------------------------------------------------------
+イベントのフック				*reanimate-events-hook*
 
 |reanimate.vim| では各処理が行われるタイミングに処理をフックする事が出来ます。
 
@@ -504,7 +514,7 @@ Example >
 <
 
 ------------------------------------------------------------------------------
-コンテキスト				*reanimate-events-context*
+コンテキスト					*reanimate-events-context*
 
 各イベントの関数で受け取る context は次のようなデータを保持しています。
 
@@ -520,7 +530,7 @@ Example >
 
 
 ------------------------------------------------------------------------------
-フックポイント				*reanimate-events-point*
+フックポイント					*reanimate-events-point*
 
 各イベントが呼ばれるタイミングです。
 辞書関数の名前や登録時に使用される名前にもなります。
