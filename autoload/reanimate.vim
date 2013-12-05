@@ -109,7 +109,7 @@ function! reanimate#save(...)
 	let context = s:context(new_point)
 
 	" 違うポイントに保存する場合
-	let is_another_point = count(reanimate#save_points(), new_point) && new_point != s:last_point()
+	let is_another_point = count(reanimate#save_category_points(), new_point) && new_point != s:last_point()
 	if is_another_point
 		call s:call_event("save_leave", context)
 	endif
