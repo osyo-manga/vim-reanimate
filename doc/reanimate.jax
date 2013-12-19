@@ -355,6 +355,19 @@ g:reanimate_default_category			*g:reanimate_default_category*
 <
 
 
+g:reanimate_enable_force_load			*g:reanimate_enable_force_load*
+	保存・復元時にカテゴリが指定されなかった場合に使用されるカテゴリ名で
+	す。
+>
+	" Default
+	let g:reanimate_default_category = "default_category"
+	
+	" Example
+	" default_category/homu で保存される
+	:ReanimateSave homu
+<
+
+
 ==============================================================================
 vimrc_local					*reanimate-vimrc_local*
 

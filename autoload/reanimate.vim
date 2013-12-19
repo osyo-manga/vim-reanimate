@@ -134,7 +134,16 @@ function! reanimate#load(...)
 		call s:call_event("load_leave", context)
 	endif
 
-	call s:load(context)
+	try
+		call s:load(context)
+	catch
+		echohl ErrorMsg
+		echo v:exception
+		echohl NONE
+		if !g:reanimate_enable_force_load
+			return
+		endif
+	endtry
 	let s:last_point = new_point
 	let s:last_point_category[s:get_category(new_point)] = matchstr(new_point, '.*/\zs.*')
 

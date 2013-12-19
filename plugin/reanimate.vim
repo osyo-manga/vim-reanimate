@@ -14,6 +14,7 @@ let g:reanimate_sessionoptions    = get(g:, "reanimate_sessionoptions", &session
 let g:reanimate_event_disables    = get(g:, "reanimate_event_disables", {})
 let g:reanimate_disables          = get(g:, "reanimate_disables", [])
 let g:reanimate_default_category  = get(g:, "reanimate_default_category", "default_category")
+let g:reanimate_enable_force_load = get(g:, "reanimate_enable_force_load", 0)
 
 
 function! s:save_point_completelist(arglead, ...)
