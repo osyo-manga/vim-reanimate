@@ -211,7 +211,7 @@ endfunction
 
 
 function! s:save_dir()
-	return substitute(g:reanimate_save_dir, "\\", "/", "g")
+	return substitute(expand(g:reanimate_save_dir), "\\", "/", "g")
 endfunction
 
 function! s:default_point()
