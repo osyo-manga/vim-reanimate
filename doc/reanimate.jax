@@ -13,9 +13,9 @@
   |unite.vim|			  |unite-reanimate|
 設定				|reanimate-setting|
   変数				  |reanimate-variables|
-保存・復元データ		|reanimate-save-data|
 vimrc_local			|reanimate-vimrc_local|
-イベントのフック		|reanimate-events|
+イベント			|reanimate-events|
+  イベントのフック		  |reanimate-events-hook|
   イベントの登録		  |reanimate-events-register|
   コンテキスト			  |reanimate-events-context|
   フックポイント		  |reanimate-events-point|
