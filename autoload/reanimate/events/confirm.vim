@@ -16,16 +16,13 @@ function! s:event.load_leave(context)
 	if input == "y"
 		call reanimate#save(reanimate#last_point())
 	elseif input != "n"
-" 			echom "Canceled"
 		throw "Canceled"
 	endif
 endfunction
 
 function! s:event.save_leave(context)
-	echom "homu"
 	let input = input("Overwrite the ".a:context.point."? [y/n]:")
 	if input != "y"
-" 			echom "No Saved"
 		throw "Canceled"
 	endif
 endfunction
