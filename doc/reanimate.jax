@@ -367,6 +367,14 @@ g:reanimate_enable_force_load			*g:reanimate_enable_force_load*
 	:ReanimateSave homu
 <
 
+			*g:reanimate#events#session#enable_force_source*
+g:reanimate#events#session#enable_force_source
+	1 が設定されている場合、 |session-file| の |:source|
+	時にエラーがあっても最後まで |:source| するようになります。
+	途中でエラーになっても最後まで読み込みたい場合に使用します。
+Default: >
+	let g:reanimate#events#session#enable_force_source = 0
+<
 
 ==============================================================================
 vimrc_local					*reanimate-vimrc_local*
