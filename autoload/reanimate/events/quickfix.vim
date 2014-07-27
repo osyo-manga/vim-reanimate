@@ -19,7 +19,6 @@ function! s:event.load_post(context)
 	endif
 endfunction
 
-
 function! s:write_quickfix(file, qflist)
 	let qflist = a:qflist
 
