@@ -6,7 +6,6 @@ let g:loaded_reanimate = 1
 let s:save_cpo = &cpo
 set cpo&vim
 
-
 " global variable
 let g:reanimate_save_dir          = get(g:, "reanimate_save_dir", expand("~/reanimate/save_dir"))
 let g:reanimate_default_save_name = get(g:, "reanimate_default_save_name", "latest")
