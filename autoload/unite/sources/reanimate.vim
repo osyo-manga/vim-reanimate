@@ -3,6 +3,7 @@ set cpo&vim
 
 scriptencoding utf-8
 
+
 function! unite#sources#reanimate#define()
 	return s:source
 endfunction
