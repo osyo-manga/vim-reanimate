@@ -6,9 +6,8 @@ scriptencoding utf-8
 function! reanimate#events#vimrc_local#edit(...)
 	let point = a:0 ? a:1 : reanimate#last_point()
 	let target = reanimate#point_to_path(point)."/".s:vimrc_local_filename().".vim"
-	split split
+	execute "split" target
 	set filetype=vim
-	execute "edit" target
 endfunction
 
 function! reanimate#events#vimrc_local#define()
